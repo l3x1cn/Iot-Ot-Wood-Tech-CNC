@@ -64,7 +64,7 @@ def test_podatnosc_modbus_plc_dostepny_z_biura(v0):
         "from pymodbus.client import ModbusTcpClient\n"
         "c = ModbusTcpClient('plc-odpylanie', port=502, timeout=3)\n"
         "assert c.connect()\n"
-        "r = c.read_holding_registers(0, 3)\n"
+        "r = c.read_holding_registers(0, count=3)\n"
         "print(r.registers)\n"
     )
     wynik = v0.exec("biuro-pc", "python3", "-c", skrypt)
