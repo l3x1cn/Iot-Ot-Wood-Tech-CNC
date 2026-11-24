@@ -16,23 +16,36 @@ import json
 import os
 import random
 
-from pymodbus.datastore import ModbusSequentialDataBlock, ModbusServerContext, ModbusSlaveContext
-from pymodbus.server import StartAsyncTcpServer
+from pymodbus.server import ModbusTcpServer
+from pymodbus.simulator import DataType, SimData, SimDevice
 
 from wtsim.wspolne import klient_mqtt, log
 
 PLC_ID = os.environ.get("PLC_ID", "plc-odpylanie")
 PREFIKS = os.environ.get("MQTT_PREFIKS", "wood-tech/hala1")
-CEWKI, REJESTRY = 1, 3  # kody funkcji Modbus dla getValues/setValues
+CEWKI, REJESTRY = 1, 3  # kody funkcji Modbus wskazujące blok pamięci (cewki, rejestry holding)
 
 
-async def proces(kontekst: ModbusServerContext) -> None:
+def urzadzenie() -> SimDevice:
+    """Pamięć PLC: osobne bloki cewek, wejść, rejestrów holding i wejściowych, po 16 adresów od 0."""
+    return SimDevice(
+        id=0,  # odpowiada na każdy identyfikator urządzenia (unit id)
+        simdata=(
+            [SimData(0, values=[True, True] + [False] * 14, datatype=DataType.BITS)],
+            [SimData(0, values=[False] * 16, datatype=DataType.BITS)],
+            [SimData(0, count=16, values=0, datatype=DataType.REGISTERS)],
+            [SimData(0, count=16, values=0, datatype=DataType.REGISTERS)],
+        ),
+    )
+
+
+async def proces(pamiec) -> None:
+    """Pętla procesu; `pamiec` to datastore serwera (ModbusTcpServer.context)."""
     klient = klient_mqtt(PLC_ID)
-    urzadzenie = kontekst[0]
     obroty, pyl = 0.0, 5.0
     poprzednie = None
     while True:
-        wentylator, przepustnica = urzadzenie.getValues(CEWKI, 0, 2)
+        wentylator, przepustnica = await pamiec.async_getValues(0, CEWKI, 0, 2)
         if (wentylator, przepustnica) != poprzednie:
             log(PLC_ID, "zmiana_cewek", wentylator=bool(wentylator), przepustnica=bool(przepustnica))
             poprzednie = (wentylator, przepustnica)
@@ -42,7 +55,7 @@ async def proces(kontekst: ModbusServerContext) -> None:
         wyciag = (obroty / 2900.0) * (1.0 if przepustnica else 0.1)
         # Obróbka wytwarza pył; wyciąg go usuwa. Bez wyciągu stężenie szybko rośnie (zagrożenie wybuchem).
         pyl = max(0.5, pyl + 0.8 - 1.0 * wyciag * pyl / 5.0 + random.gauss(0, 0.05))
-        urzadzenie.setValues(REJESTRY, 0, [int(obroty), int(podcisnienie), int(pyl * 10)])
+        await pamiec.async_setValues(0, REJESTRY, 0, [int(obroty), int(podcisnienie), int(pyl * 10)])
         stan = {
             "plc": PLC_ID,
             "wentylator": bool(wentylator),
@@ -58,17 +71,9 @@ async def proces(kontekst: ModbusServerContext) -> None:
 
 
 async def main() -> None:
-    urzadzenie = ModbusSlaveContext(
-        co=ModbusSequentialDataBlock(0, [1, 1] + [0] * 14),
-        hr=ModbusSequentialDataBlock(0, [0] * 16),
-        zero_mode=True,
-    )
-    kontekst = ModbusServerContext(slaves=urzadzenie, single=True)
+    serwer = ModbusTcpServer(urzadzenie(), address=("0.0.0.0", 502))
     log(PLC_ID, "start", modbus_port=502)
-    await asyncio.gather(
-        StartAsyncTcpServer(context=kontekst, address=("0.0.0.0", 502)),
-        proces(kontekst),
-    )
+    await asyncio.gather(serwer.serve_forever(), proces(serwer.context))
 
 
 if __name__ == "__main__":
