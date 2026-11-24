@@ -4,7 +4,7 @@ Po każdym etapie dodajemy tu krótkie sprawozdanie (1–2 strony), które oddaj
 
 | Plik | Etap |
 |---|---|
-| `etap-1-2.md` | Etapy 1 i 2: inwentaryzacja, DFD, Purdue, Zones & Conduits, SL-T |
+| [etap-1-2.md](etap-1-2.md) | Etapy 1 i 2: inwentaryzacja, DFD, Purdue, Zones & Conduits, SL-T |
 | `etap-3.md` | Etap 3: bezpieczeństwo komunikacji MQTT |
 | `etap-4.md` | Etap 4: modelowanie zagrożeń i incydent |
 | `etap-5.md` | Etap 5: Edge AI i detekcja anomalii |
