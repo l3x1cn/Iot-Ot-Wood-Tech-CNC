@@ -9,7 +9,7 @@ Szkielet repozytorium, harness i lab v0 (sieć niebezpieczna).
 | Zadanie | Cel | Zależy od | Stan |
 |---|---|---|---|
 | [T01](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/3) Szkielet repozytorium i harness | Repozytorium ma opis projektu ze statusem etapów, kartę projektu, szablon sprawozdań i backlog w Issues, a każda zmiana przechodzi te same kontrole lokalnie i w CI. | — | zamknięte |
-| [T02](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/4) Lab v0: sieć niebezpieczna | Stan as-is ze scenariusza odtworzony w Docker Compose i uruchamiany jednym poleceniem, z testami potwierdzającymi jego celowe słabości. | [T01](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/3) | w toku |
+| [T02](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/4) Lab v0: sieć niebezpieczna | Stan as-is ze scenariusza odtworzony w Docker Compose i uruchamiany jednym poleceniem, z testami potwierdzającymi jego celowe słabości. | [T01](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/3) | zamknięte |
 
 ## Etapy 1–2 · Inwentaryzacja i architektura
 
@@ -17,7 +17,7 @@ Asset Inventory, DFD, model Purdue, Zones & Conduits, SL-T. Oddanie: tabela inwe
 
 | Zadanie | Cel | Zależy od | Stan |
 |---|---|---|---|
-| [T03](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/5) Asset Inventory | Pełna inwentaryzacja aktywów stanu as-is, z której wynikają strefy i poziomy Purdue. | [T02](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/4) | do zrobienia |
+| [T03](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/5) Asset Inventory | Pełna inwentaryzacja aktywów stanu as-is, z której wynikają strefy i poziomy Purdue. | [T02](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/4) | w toku |
 | [T04](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/6) Data Flow Diagram | Przepływy danych v0 z protokołami i granicami zaufania jako podstawa STRIDE i reguł zapór. | [T03](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/5) | do zrobienia |
 | [T05](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/7) Model Purdue i Zones & Conduits | Docelowy podział sieci na strefy i kanały zgodnie z IEC 62443, z IDMZ na poziomie 3.5. | [T04](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/6) | do zrobienia |
 | [T06](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/8) SL-T | Uzasadniony docelowy poziom bezpieczeństwa dla każdej strefy. | [T05](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/7) | do zrobienia |
