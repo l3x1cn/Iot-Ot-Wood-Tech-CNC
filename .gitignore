@@ -1,0 +1,11 @@
+# Python
+.venv/
+__pycache__/
+
+# Sekrety: klucze prywatne i hasła nie trafiają do repozytorium
+*.key
+*.env
+lab/**/secrets/
+
+# Duże pliki robocze
+*.pcapng.tmp
