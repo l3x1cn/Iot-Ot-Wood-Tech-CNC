@@ -18,8 +18,8 @@ Całe środowisko jest symulowane w Dockerze na jednej maszynie wirtualnej z Deb
 | Etap | Zakres | Stan | Sprawozdanie cząstkowe |
 |---|---|---|---|
 | Przygotowanie | szkielet repozytorium, lab `v0` (sieć niebezpieczna) | zrobione | — |
-| Etap 1 | inwentaryzacja aktywów (Asset Inventory), Data Flow Diagram | w toku | — |
-| Etap 2 | model Purdue, strefy i kanały (Zones & Conduits), granice zaufania, SL-T | do zrobienia | — |
+| Etap 1 | inwentaryzacja aktywów (Asset Inventory), Data Flow Diagram | zrobione | [etap-1-2.md](docs/sprawozdania/etap-1-2.md) |
+| Etap 2 | model Purdue, strefy i kanały (Zones & Conduits), granice zaufania, SL-T | zrobione | [etap-1-2.md](docs/sprawozdania/etap-1-2.md) |
 | Etap 3 | bezpieczeństwo komunikacji: MQTT z TLS, certyfikaty, ACL, Wireshark przed i po | do zrobienia | — |
 | Etap 4 | STRIDE, MITRE ATT&CK for ICS, kontrolowany incydent (Tampering G-code), logi | do zrobienia | — |
 | Etap 5 | Edge AI: dane prądu wrzeciona, model TinyML, kwantyzacja, alarm lokalny na ESP32 | do zrobienia | — |
