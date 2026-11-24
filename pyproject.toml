@@ -18,10 +18,10 @@ package = false
 dev = ["pytest>=9.1.1"]
 
 [tool.pytest.ini_options]
-# `make unit` (job unit w CI): testy jednostkowe symulatorów, bez Dockera.
-# Testy na działającym labie są w tests/ (marker security, `make test-security`), poza testpaths.
+# `make unit` (job unit w CI): testy jednostkowe symulatorów i spójności dokumentacji z labem, bez Dockera.
+# Testy na działającym labie są w tests/security (marker security, `make test-security`), poza testpaths.
 # --strict-markers: literówka w markerze to błąd zbierania.
-testpaths = ["lab/obrazy/sim/tests"]
+testpaths = ["lab/obrazy/sim/tests", "tests/dokumentacja"]
 pythonpath = ["lab/obrazy/sim"]
 addopts = ["--import-mode=importlib", "--strict-markers"]
 markers = [

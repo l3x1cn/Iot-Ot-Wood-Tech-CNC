@@ -8,6 +8,7 @@ Całe środowisko jest symulowane w Dockerze na jednej maszynie wirtualnej z Deb
 - Zadania: [Issues](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues), etapy: [Milestones](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/milestones)
 - Backlog (migawka Issues według etapów): [docs/backlog.md](docs/backlog.md)
 - Lab (topologia, uruchomienie, Wireshark): [lab/README.md](lab/README.md)
+- Architektura (inwentaryzacja aktywów, przepływy danych, Purdue, strefy): [docs/architektura/](docs/architektura/)
 - Sprawozdania cząstkowe: [docs/sprawozdania/](docs/sprawozdania/)
 
 ## Status projektu
@@ -16,8 +17,8 @@ Całe środowisko jest symulowane w Dockerze na jednej maszynie wirtualnej z Deb
 
 | Etap | Zakres | Stan | Sprawozdanie cząstkowe |
 |---|---|---|---|
-| Przygotowanie | szkielet repozytorium, lab `v0` (sieć niebezpieczna) | w toku | — |
-| Etap 1 | inwentaryzacja aktywów (Asset Inventory), Data Flow Diagram | do zrobienia | — |
+| Przygotowanie | szkielet repozytorium, lab `v0` (sieć niebezpieczna) | zrobione | — |
+| Etap 1 | inwentaryzacja aktywów (Asset Inventory), Data Flow Diagram | w toku | — |
 | Etap 2 | model Purdue, strefy i kanały (Zones & Conduits), granice zaufania, SL-T | do zrobienia | — |
 | Etap 3 | bezpieczeństwo komunikacji: MQTT z TLS, certyfikaty, ACL, Wireshark przed i po | do zrobienia | — |
 | Etap 4 | STRIDE, MITRE ATT&CK for ICS, kontrolowany incydent (Tampering G-code), logi | do zrobienia | — |
