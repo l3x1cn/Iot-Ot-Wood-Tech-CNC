@@ -14,7 +14,7 @@ Po każdym etapie dodajemy tu krótkie sprawozdanie (1–2 strony), które oddaj
 ```markdown
 # Etap N — <nazwa>
 
-Data: RRRR-MM-DD · Zespół: Osoba 1–4
+Data: RRRR-MM-DD
 
 ## Cel
 Co etap miał dać, według instrukcji.

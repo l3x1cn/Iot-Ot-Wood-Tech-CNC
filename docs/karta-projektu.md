@@ -1,16 +1,5 @@
 # Karta projektu
 
-## Zespół
-
-| Rola | Osoba | Odpowiada za |
-|---|---|---|
-| R1 Architektura i sieć | Osoba 1 | inwentaryzacja, DFD, model Purdue, strefy i kanały, SL-T, router i zapory w labie |
-| R2 Komunikacja | Osoba 2 | broker MQTT, PKI i certyfikaty, TLS, ACL, bramka Node-RED, analiza w Wiresharku |
-| R3 Zagrożenia i incydent | Osoba 3 | STRIDE, MITRE ATT&CK for ICS, kontrolowany eksperyment, logi incydentu |
-| R4 Edge AI | Osoba 4 | dane prądu wrzeciona, zbiory treningowy i testowy, model TinyML, kwantyzacja, ESP32 |
-
-Każda osoba odpowiada na obronie na pytania ze swojej części, ale zna całość.
-
 ## Scenariusz
 
 Nr 4 — Średnie: zautomatyzowana fabryka mebli „Wood-Tech CNC”.
