@@ -7,7 +7,7 @@ Zadania według etapów z instrukcji. Kolumna „Zależy od” to kolejność pr
 | Zadanie | Cel | Rola | Zależy od | Stan |
 |---|---|---|---|---|
 | T01 Szkielet repozytorium | README ze statusem projektu, karta projektu, szablon sprawozdań, backlog. | wszyscy | — | w toku |
-| T02 Lab `v0`: sieć niebezpieczna | Płaska sieć w Docker Compose odwzorowująca stan as-is, uruchamiana jednym poleceniem. | R1 | T01 | do zrobienia |
+| T02 Lab `v0`: sieć niebezpieczna | Płaska sieć w Docker Compose odwzorowująca stan as-is, uruchamiana jednym poleceniem. | R1 | T01 | w toku |
 
 ## Etapy 1 i 2 — inwentaryzacja i architektura
 

@@ -5,6 +5,7 @@ Cyber-Ochrona IoT/OT — projekt laboratoryjny, Scenariusz 4: zautomatyzowana fa
 Całe środowisko jest symulowane w Dockerze na jednej maszynie wirtualnej z Debianem (8 GB RAM, 4 CPU): obrabiarki CNC, PLC odpylania, węzeł ESP32 z czujnikiem prądu, router, broker MQTT, bramka Node-RED i „chmura”. Pracujemy w dwóch krokach: najpierw stawiamy sieć celowo niebezpieczną (`v0`, stan as-is z opisu scenariusza), szukamy w niej podatności i atakujemy ją, a potem budujemy wersję zabezpieczoną (`v1`) i powtarzamy te same testy.
 
 - Karta projektu (zespół, scenariusz, zakres, kryteria oceny): [docs/karta-projektu.md](docs/karta-projektu.md)
+- Lab (topologia, uruchomienie, Wireshark): [lab/README.md](lab/README.md)
 - Zadania według etapów: [docs/backlog.md](docs/backlog.md)
 - Sprawozdania cząstkowe: [docs/sprawozdania/](docs/sprawozdania/)
 
@@ -21,6 +22,16 @@ Całe środowisko jest symulowane w Dockerze na jednej maszynie wirtualnej z Deb
 | Etap 4 | STRIDE, MITRE ATT&CK for ICS, kontrolowany incydent (Tampering G-code), logi | do zrobienia | — |
 | Etap 5 | Edge AI: dane prądu wrzeciona, model TinyML, kwantyzacja, alarm lokalny na ESP32 | do zrobienia | — |
 | Obrona | sprawozdanie końcowe, ograniczenia rozwiązania, demo | do zrobienia | — |
+
+## Szybki start
+
+```bash
+make v0-up       # sieć niebezpieczna v0 (Docker Compose)
+make v0-mqtt     # telemetria widoczna w brokerze „w chmurze”
+make v0-down
+```
+
+Wymagania i opis: [lab/README.md](lab/README.md).
 
 ## Jak pracujemy
 

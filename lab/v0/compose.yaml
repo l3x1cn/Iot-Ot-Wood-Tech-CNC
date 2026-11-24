@@ -1,0 +1,132 @@
+# Lab v0: sieć niebezpieczna (stan as-is ze scenariusza Wood-Tech CNC).
+#
+# - jedna płaska sieć zakładu: biuro, serwerownia i hala w tej samej podsieci 10.10.0.0/24;
+# - router bez filtrowania, tylko NAT do „internetu” (203.0.113.0/24, adresy dokumentacyjne);
+# - maszyny wysyłają MQTT wprost do brokera w chmurze: port 1883, bez TLS, bez hasła, bez ACL;
+# - G-code idzie ze stacji CAD na obrabiarki jawnym HTTP bez uwierzytelnienia;
+# - PLC odpylania przyjmuje zapisy Modbus TCP od każdego.
+#
+# Uruchomienie: make v0-up (w katalogu głównym repozytorium).
+name: wt-v0
+
+x-sim: &sim
+  build: ../obrazy/sim
+  image: wood-tech/sim:dev
+  cap_add: [NET_ADMIN]   # tylko do ustawienia trasy domyślnej przez router labu (wtsim.brama)
+  restart: unless-stopped
+  mem_limit: 96m
+  environment: &sim-env
+    BRAMA: 10.10.0.254
+    MQTT_HOST: mqtt.chmura.example
+    MQTT_PORT: "1883"
+  extra_hosts:
+    - "mqtt.chmura.example:203.0.113.10"
+
+networks:
+  zaklad:
+    driver_opts:
+      com.docker.network.bridge.name: wt0-zaklad          # tu podpinamy Wiresharka na hoście
+      com.docker.network.bridge.enable_ip_masquerade: "false"
+    ipam:
+      config: [{ subnet: 10.10.0.0/24, gateway: 10.10.0.1 }]
+  internet:
+    internal: true    # „internet” labu nie ma wyjścia do prawdziwej sieci
+    driver_opts:
+      com.docker.network.bridge.name: wt0-internet
+    ipam:
+      config: [{ subnet: 203.0.113.0/24, gateway: 203.0.113.1 }]
+
+services:
+  router:
+    build: ../obrazy/router
+    image: wood-tech/router:dev
+    cap_add: [NET_ADMIN, NET_RAW]
+    sysctls:
+      net.ipv4.ip_forward: "1"
+    volumes:
+      - ./router/nftables.nft:/etc/router/nftables.nft:ro
+    networks:
+      zaklad: { ipv4_address: 10.10.0.254 }
+      internet: { ipv4_address: 203.0.113.2 }
+    mem_limit: 32m
+    restart: unless-stopped
+
+  chmura-mqtt:
+    image: eclipse-mosquitto:2.0.22
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    networks:
+      internet: { ipv4_address: 203.0.113.10 }
+    mem_limit: 32m
+    restart: unless-stopped
+
+  cnc-1:
+    <<: *sim
+    hostname: cnc-1
+    command: ["python", "-m", "wtsim.cnc"]
+    environment:
+      <<: *sim-env
+      CNC_ID: cnc-1
+    networks:
+      zaklad: { ipv4_address: 10.10.0.11 }
+    depends_on: [router, chmura-mqtt]
+
+  cnc-2:
+    <<: *sim
+    hostname: cnc-2
+    command: ["python", "-m", "wtsim.cnc"]
+    environment:
+      <<: *sim-env
+      CNC_ID: cnc-2
+    networks:
+      zaklad: { ipv4_address: 10.10.0.12 }
+    depends_on: [router, chmura-mqtt]
+
+  plc-odpylanie:
+    <<: *sim
+    hostname: plc-odpylanie
+    command: ["python", "-m", "wtsim.plc"]
+    environment:
+      <<: *sim-env
+      PLC_ID: plc-odpylanie
+    networks:
+      zaklad: { ipv4_address: 10.10.0.21 }
+    depends_on: [router, chmura-mqtt]
+
+  serwer:
+    image: nginx:1.28-alpine
+    hostname: serwer
+    volumes:
+      - ./serwer/projekty:/usr/share/nginx/html/projekty:ro
+    networks:
+      zaklad: { ipv4_address: 10.10.0.31 }
+    mem_limit: 32m
+    restart: unless-stopped
+
+  cad-stacja:
+    <<: *sim
+    hostname: cad-stacja
+    command: ["python", "-m", "wtsim.cad"]
+    environment:
+      <<: *sim-env
+      SERWER_URL: http://serwer/projekty
+      ZADANIA: cnc-1=blat-stolu.nc,cnc-2=front-szafki.nc
+      OKRES: "60"
+    networks:
+      zaklad: { ipv4_address: 10.10.0.41 }
+    depends_on: [serwer, cnc-1, cnc-2]
+
+  # Przejęty komputer biurowy. Uruchamiany tylko z profilem `atak`: make v0-up-atak.
+  biuro-pc:
+    build: ../obrazy/atakujacy
+    image: wood-tech/atakujacy:dev
+    profiles: [atak]
+    hostname: biuro-pc
+    cap_add: [NET_ADMIN, NET_RAW]
+    environment:
+      BRAMA: 10.10.0.254
+    extra_hosts:
+      - "mqtt.chmura.example:203.0.113.10"
+    networks:
+      zaklad: { ipv4_address: 10.10.0.66 }
+    mem_limit: 128m
