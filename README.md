@@ -7,6 +7,7 @@ Całe środowisko jest symulowane w Dockerze na jednej maszynie wirtualnej z Deb
 - Karta projektu (scenariusz, zakres, kryteria oceny): [docs/karta-projektu.md](docs/karta-projektu.md)
 - Zadania: [Issues](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues), etapy: [Milestones](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/milestones)
 - Backlog (migawka Issues według etapów): [docs/backlog.md](docs/backlog.md)
+- Lab (topologia, uruchomienie, Wireshark): [lab/README.md](lab/README.md)
 - Sprawozdania cząstkowe: [docs/sprawozdania/](docs/sprawozdania/)
 
 ## Status projektu
@@ -34,10 +35,19 @@ uv sync                       # Python 3.13 i zależności w .venv
 uvx pre-commit@4.7.0 install  # hook gitleaks przed commitem, raz po klonie
 ```
 
+## Szybki start
+
+```bash
+make v0-up-atak      # sieć niebezpieczna v0 z przejętym komputerem biurowym
+make test-security   # testy potwierdzające podatności v0 (raport w reports/)
+make v0-mqtt         # telemetria widoczna w brokerze „w chmurze”
+make v0-down
+```
+
 ## Jak pracujemy
 
 - Każde zadanie to issue `Txx` z milestone'em swojego etapu. Jeden issue to jeden PR: gałąź `txx-krotki-opis`, PR do `main` z `Closes #N`.
-- Przed PR: `make lint unit gitleaks trivy-config` (te same kontrole co CI).
+- Przed PR: `make lint unit gitleaks trivy-config` (te same kontrole co CI). Zmiany w labie: także `make v0-up-atak test-security` (job `e2e` w CI).
 - Klucze prywatne i hasła nigdy nie trafiają do repozytorium: blokuje je hook gitleaks i job `secrets`.
 - PR kończący etap aktualizuje tabelę „Status projektu” i dodaje sprawozdanie cząstkowe według [szablonu](docs/sprawozdania/README.md).
 - Dowody (pliki pcap, logi, zrzuty ekranu) trafiają do `evidence/<etap>/` i są linkowane ze sprawozdania.

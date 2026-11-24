@@ -1,0 +1,16 @@
+#!/usr/sbin/nft -f
+# v0: tani router zakładowy. NAT z sieci zakładu do „internetu”, ŻADNEGO filtrowania.
+flush ruleset
+
+table ip nat {
+  chain postrouting {
+    type nat hook postrouting priority srcnat; policy accept;
+    ip saddr 10.10.0.0/24 ip daddr != 10.10.0.0/24 masquerade
+  }
+}
+
+table inet filter {
+  chain forward {
+    type filter hook forward priority filter; policy accept;
+  }
+}
