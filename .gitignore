@@ -9,3 +9,6 @@ lab/**/secrets/
 
 # Duże pliki robocze
 *.pcapng.tmp
+
+# Wyniki kontroli generowane lokalnie i w CI
+reports/

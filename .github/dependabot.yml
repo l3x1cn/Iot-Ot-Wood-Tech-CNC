@@ -1,0 +1,17 @@
+# Dependabot (T01, wzorem secure-k8s-aiops): co tydzień akcje GitHub i zależności Pythona (uv.lock).
+# Cooldown 7 dni: nowe wydanie trafia do PR po tygodniu.
+# Narzędzi z mise.toml Dependabot nie obsługuje: podbijamy je ręcznie PR-em.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+  - package-ecosystem: uv
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7

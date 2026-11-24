@@ -1,0 +1,25 @@
+[project]
+name = "iot-ot-wood-tech-cnc"
+version = "0.1.0"
+description = "Cyber-Ochrona IoT/OT: symulowana fabryka mebli Wood-Tech CNC"
+requires-python = "==3.13.*"
+dependencies = []
+
+[tool.uv]
+# Katalog główny to projekt, nie pakiet do instalacji.
+package = false
+
+[dependency-groups]
+dev = ["pytest>=9.1.1"]
+
+[tool.pytest.ini_options]
+# `make unit` (job unit w CI). --strict-markers: literówka w markerze to błąd zbierania.
+addopts = ["--import-mode=importlib", "--strict-markers"]
+
+[tool.ruff]
+# `make lint` i job lint w CI; ruff w wersji z mise.toml.
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

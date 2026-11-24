@@ -1,0 +1,11 @@
+# Wersje narzędzi zespołu (T01, wzorem secure-k8s-aiops); ten sam plik czyta CI (.github/workflows/ci.yml).
+# Zmiana wersji: PR. Nowe narzędzie dopisz też do listy w scripts/doctor.sh.
+# min_version to też wersja mise w CI (zmienna CI_MISE_VERSION w .github/workflows/ci.yml): zmieniaj razem.
+min_version = "2026.10.25"
+
+[tools]
+python = "3.13.16"
+uv = "0.13.7"
+ruff = "0.17.3"
+trivy = "0.76.0" # nigdy 0.69.4 (CVE-2026-33634)
+gitleaks = "8.30.1"
