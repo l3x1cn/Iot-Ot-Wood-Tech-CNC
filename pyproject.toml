@@ -7,7 +7,7 @@ requires-python = "==3.13.*"
 dependencies = [
     "paho-mqtt==2.1.0",
     "pymodbus==3.6.9",
-    "pyroute2==0.9.4",
+    "pyroute2==0.9.7",
 ]
 
 [tool.uv]
