@@ -3,7 +3,12 @@ name = "iot-ot-wood-tech-cnc"
 version = "0.1.0"
 description = "Cyber-Ochrona IoT/OT: symulowana fabryka mebli Wood-Tech CNC"
 requires-python = "==3.13.*"
-dependencies = []
+# Te same wersje co w lab/obrazy/sim/requirements.txt (obraz symulatorów): zmieniaj razem.
+dependencies = [
+    "paho-mqtt==2.1.0",
+    "pymodbus==3.6.9",
+    "pyroute2==0.9.4",
+]
 
 [tool.uv]
 # Katalog główny to projekt, nie pakiet do instalacji.
@@ -13,8 +18,15 @@ package = false
 dev = ["pytest>=9.1.1"]
 
 [tool.pytest.ini_options]
-# `make unit` (job unit w CI). --strict-markers: literówka w markerze to błąd zbierania.
+# `make unit` (job unit w CI): testy jednostkowe symulatorów, bez Dockera.
+# Testy na działającym labie są w tests/ (marker security, `make test-security`), poza testpaths.
+# --strict-markers: literówka w markerze to błąd zbierania.
+testpaths = ["lab/obrazy/sim/tests"]
+pythonpath = ["lab/obrazy/sim"]
 addopts = ["--import-mode=importlib", "--strict-markers"]
+markers = [
+    "security: test bezpieczeństwa na działającym labie (tests/security)",
+]
 
 [tool.ruff]
 # `make lint` i job lint w CI; ruff w wersji z mise.toml.

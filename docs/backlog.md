@@ -8,8 +8,8 @@ Szkielet repozytorium, harness i lab v0 (sieć niebezpieczna).
 
 | Zadanie | Cel | Zależy od | Stan |
 |---|---|---|---|
-| [T01](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/3) Szkielet repozytorium i harness | Repozytorium ma opis projektu ze statusem etapów, kartę projektu, szablon sprawozdań i backlog w Issues, a każda zmiana przechodzi te same kontrole lokalnie i w CI. | — | w toku |
-| [T02](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/4) Lab v0: sieć niebezpieczna | Stan as-is ze scenariusza odtworzony w Docker Compose i uruchamiany jednym poleceniem, z testami potwierdzającymi jego celowe słabości. | [T01](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/3) | do zrobienia |
+| [T01](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/3) Szkielet repozytorium i harness | Repozytorium ma opis projektu ze statusem etapów, kartę projektu, szablon sprawozdań i backlog w Issues, a każda zmiana przechodzi te same kontrole lokalnie i w CI. | — | zamknięte |
+| [T02](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/4) Lab v0: sieć niebezpieczna | Stan as-is ze scenariusza odtworzony w Docker Compose i uruchamiany jednym poleceniem, z testami potwierdzającymi jego celowe słabości. | [T01](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/3) | w toku |
 
 ## Etapy 1–2 · Inwentaryzacja i architektura
 

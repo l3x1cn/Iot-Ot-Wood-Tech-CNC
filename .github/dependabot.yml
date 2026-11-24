@@ -1,6 +1,7 @@
-# Dependabot (T01, wzorem secure-k8s-aiops): co tydzień akcje GitHub i zależności Pythona (uv.lock).
-# Cooldown 7 dni: nowe wydanie trafia do PR po tygodniu.
+# Dependabot (T01, wzorem secure-k8s-aiops): co tydzień akcje GitHub, zależności Pythona (uv.lock)
+# i obrazy bazowe w lab/obrazy (T02). Cooldown 7 dni: nowe wydanie trafia do PR po tygodniu.
 # Narzędzi z mise.toml Dependabot nie obsługuje: podbijamy je ręcznie PR-em.
+# Uwaga: lab/obrazy/sim/requirements.txt trzymamy w zgodzie z pyproject.toml ręcznie.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -11,6 +12,15 @@ updates:
       default-days: 7
   - package-ecosystem: uv
     directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+  - package-ecosystem: docker
+    directories:
+      - "/lab/obrazy/sim"
+      - "/lab/obrazy/router"
+      - "/lab/obrazy/atakujacy"
     schedule:
       interval: weekly
     cooldown:
