@@ -1,0 +1,114 @@
+# CI (T01, wzorem secure-k8s-aiops): każdy PR i każdy push na main.
+# Każdy job uruchamia cele make, które działają też lokalnie. Narzędzia instaluje jdx/mise-action z mise.toml
+# (tylko te, których job potrzebuje); wersja mise to CI_MISE_VERSION poniżej (= min_version z mise.toml).
+# Akcje przypięte po pełnym SHA commita z komentarzem wersji (lekcja z kompromitacji trivy-action,
+# CVE-2026-33634); podbija je Dependabot.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  # = min_version z mise.toml: zmieniaj razem.
+  CI_MISE_VERSION: "2026.10.25"
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@236a21c3b91f5db6d4e174b348674a0f0caac06d # v5.2.9
+        with:
+          version: ${{ env.CI_MISE_VERSION }}
+          install_args: ruff
+      - run: make lint
+
+  unit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      # Tylko Python z mise.toml: uv nie pobiera własnego interpretera.
+      UV_PYTHON_DOWNLOADS: never
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@236a21c3b91f5db6d4e174b348674a0f0caac06d # v5.2.9
+        with:
+          version: ${{ env.CI_MISE_VERSION }}
+          install_args: python uv
+      - run: make unit
+
+  secrets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Pełna historia: gitleaks skanuje wszystkie commity osiągalne z HEAD.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: jdx/mise-action@236a21c3b91f5db6d4e174b348674a0f0caac06d # v5.2.9
+        with:
+          version: ${{ env.CI_MISE_VERSION }}
+          install_args: gitleaks
+      - run: make gitleaks
+
+  config:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@236a21c3b91f5db6d4e174b348674a0f0caac06d # v5.2.9
+        with:
+          version: ${{ env.CI_MISE_VERSION }}
+          install_args: trivy
+      - id: trivy
+        run: make trivy-config
+      - if: ${{ !cancelled() && steps.trivy.outcome != 'skipped' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: trivy-config
+          path: reports/trivy/
+          overwrite: true
+
+  # Lab v0 na runnerze: stawia sieć niebezpieczną i sprawdza testami, że jej celowe słabości istnieją
+  # (tests/security). Od v1 ten job dostanie drugi przebieg z testami odwrotnymi.
+  e2e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      UV_PYTHON_DOWNLOADS: never
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@236a21c3b91f5db6d4e174b348674a0f0caac06d # v5.2.9
+        with:
+          version: ${{ env.CI_MISE_VERSION }}
+          install_args: python uv
+      - run: make v0-up-atak
+      - name: Czekaj na telemetrię w chmurze
+        run: |
+          timeout 120 bash -c 'until docker compose -f lab/v0/compose.yaml logs chmura-mqtt | grep -q "203.0.113.2"; do sleep 2; done'
+      - run: make test-security
+      - if: ${{ !cancelled() }}
+        run: mkdir -p reports && docker compose -f lab/v0/compose.yaml --profile atak logs --no-color > reports/lab-v0.log 2>&1 || true
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-v0
+          path: reports/
+          overwrite: true
+      - if: ${{ always() }}
+        run: make v0-down

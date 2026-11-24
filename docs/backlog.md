@@ -6,8 +6,8 @@ Zadania według etapów z instrukcji. Kolumna „Zależy od” to kolejność pr
 
 | Zadanie | Cel | Rola | Zależy od | Stan |
 |---|---|---|---|---|
-| T01 Szkielet repozytorium | README ze statusem projektu, karta projektu, szablon sprawozdań, backlog. | wszyscy | — | w toku |
-| T02 Lab `v0`: sieć niebezpieczna | Płaska sieć w Docker Compose odwzorowująca stan as-is, uruchamiana jednym poleceniem. | R1 | T01 | w toku |
+| T01 Szkielet repozytorium i harness | README ze statusem projektu, karta projektu, szablon sprawozdań, backlog; mise, `make doctor`, lint, testy, gitleaks, Trivy, CI (wzorem secure-k8s-aiops). | wszyscy | — | w toku |
+| T02 Lab `v0`: sieć niebezpieczna | Płaska sieć w Docker Compose odwzorowująca stan as-is, uruchamiana jednym poleceniem; testy potwierdzające jej podatności (`tests/security`). | R1 | T01 | w toku |
 
 ## Etapy 1 i 2 — inwentaryzacja i architektura
 

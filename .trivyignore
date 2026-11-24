@@ -1,0 +1,7 @@
+# Wyjątki bramki Trivy (make trivy-config). Każdy wpis: uzasadnienie i data przeglądu.
+
+# DS-0002 (brak USER w Dockerfile). Przegląd: 2026-12-31.
+# router i biuro-pc z założenia działają jako root: router zarządza nftables i trasami, a biuro-pc
+# to narzędzia atakującego (tcpdump, arpspoof). Obraz sim startuje jako root tylko po to, żeby ustawić
+# trasę przez router labu, i zaraz potem przechodzi na użytkownika sim (UID 10001, wtsim/brama.py).
+DS-0002

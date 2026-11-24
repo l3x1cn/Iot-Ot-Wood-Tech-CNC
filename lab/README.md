@@ -5,7 +5,7 @@ Symulowana fabryka w Docker Compose. Wszystkie urządzenia, router i „chmura�
 ## Wymagania (Debian)
 
 - Docker Engine z pluginem compose (`docker-ce`, `docker-compose-plugin` z repozytorium Dockera), użytkownik w grupie `docker`;
-- `make`, a do zapisu ruchu `tcpdump` (`sudo apt install make tcpdump`);
+- `make`, `tcpdump` i `openssl` (`sudo apt install make tcpdump openssl`) oraz mise z narzędziami z `mise.toml` (`make doctor` sprawdza całość);
 - Wireshark na komputerze, na którym oglądamy ruch (może być Windows, patrz niżej).
 
 Cały lab `v0` zajmuje ok. 80 MB RAM.

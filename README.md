@@ -23,19 +23,31 @@ Całe środowisko jest symulowane w Dockerze na jednej maszynie wirtualnej z Deb
 | Etap 5 | Edge AI: dane prądu wrzeciona, model TinyML, kwantyzacja, alarm lokalny na ESP32 | do zrobienia | — |
 | Obrona | sprawozdanie końcowe, ograniczenia rozwiązania, demo | do zrobienia | — |
 
+## Przygotowanie środowiska
+
+Wymagania: Debian z Docker Engine i pluginem compose (użytkownik w grupie `docker`), [mise](https://mise.jdx.dev/getting-started.html) 2026.10.25 lub nowsze, git, GNU make, tcpdump, openssl. Szczegóły: [lab/README.md](lab/README.md#wymagania-debian).
+
+```bash
+mise install                  # narzędzia w wersjach z mise.toml
+make doctor                   # narzędzia, Docker bez sudo, compose, pamięć
+uv sync                       # Python 3.13 i zależności w .venv
+uvx pre-commit@4.7.0 install  # hook gitleaks przed commitem, raz po klonie
+```
+
 ## Szybki start
 
 ```bash
-make v0-up       # sieć niebezpieczna v0 (Docker Compose)
-make v0-mqtt     # telemetria widoczna w brokerze „w chmurze”
+make v0-up-atak      # sieć niebezpieczna v0 z przejętym komputerem biurowym
+make test-security   # testy potwierdzające podatności v0 (raport w reports/)
+make v0-mqtt         # telemetria widoczna w brokerze „w chmurze”
 make v0-down
 ```
-
-Wymagania i opis: [lab/README.md](lab/README.md).
 
 ## Jak pracujemy
 
 - Każde zadanie to `Txx` z [backlogu](docs/backlog.md). Gałąź `txx-krotki-opis`, PR do `main`.
+- Przed PR: `make lint unit gitleaks trivy-config` (te same kontrole co CI). Zmiany w labie: także `make v0-up-atak test-security` (job `e2e` w CI).
+- Klucze prywatne i hasła nigdy nie trafiają do repozytorium: blokuje je hook gitleaks i job `secrets`.
 - PR kończący etap aktualizuje tabelę „Status projektu” i dodaje sprawozdanie cząstkowe według [szablonu](docs/sprawozdania/README.md).
 - Dowody (pliki pcap, logi, zrzuty ekranu) trafiają do `evidence/<etap>/` i są linkowane ze sprawozdania.
 - Materiały prowadzącego (PDF, dashboard) traktujemy jako punkt odniesienia; numeracja etapów jest zgodna z PDF.

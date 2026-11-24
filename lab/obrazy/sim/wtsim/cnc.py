@@ -24,7 +24,7 @@ CNC_ID = os.environ.get("CNC_ID", "cnc-1")
 PREFIKS = os.environ.get("MQTT_PREFIKS", "wood-tech/hala1")
 HTTP_PORT = int(os.environ.get("HTTP_PORT", "8080"))
 CZAS_RUCHU = float(os.environ.get("CZAS_RUCHU", "1.5"))
-PRAD_MAX = 30.0          # zabezpieczenie nadprądowe falownika [A]
+PRAD_MAX = 30.0  # zabezpieczenie nadprądowe falownika [A]
 PRAD_PRZECIAZENIE = 20.0  # próg ostrzeżenia [A]
 
 SLOWO = re.compile(r"([GMSFXYZ])(-?\d+(?:\.\d+)?)", re.IGNORECASE)
