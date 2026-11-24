@@ -5,7 +5,7 @@ description = "Cyber-Ochrona IoT/OT: symulowana fabryka mebli Wood-Tech CNC"
 requires-python = "==3.13.*"
 # Te same wersje co w lab/obrazy/sim/requirements.txt (obraz symulatorów): zmieniaj razem.
 dependencies = [
-    "paho-mqtt==2.1.0",
+    "paho-mqtt==2.2.0",
     "pymodbus==3.6.9",
     "pyroute2==0.9.7",
 ]
