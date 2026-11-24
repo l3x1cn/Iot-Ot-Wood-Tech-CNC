@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = "==3.13.*"
 
 [[package]]
@@ -39,7 +39,7 @@ dev = [
 requires-dist = [
     { name = "paho-mqtt", specifier = "==2.1.0" },
     { name = "pymodbus", specifier = "==3.6.9" },
-    { name = "pyroute2", specifier = "==0.9.4" },
+    { name = "pyroute2", specifier = "==0.9.7" },
 ]
 
 [package.metadata.requires-dev]
@@ -92,14 +92,14 @@ wheels = [
 
 [[package]]
 name = "pyroute2"
-version = "0.9.4"
+version = "0.9.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "win-inet-pton", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b0/5e/fc64e211cce0078555c6db98aaf14348aed527565f3c4876913a290a5b2c/pyroute2-0.9.4.tar.gz", hash = "sha256:3cbccbe1af0c2b2aeae81b327e0e91aa94c81ab19f851e74b26bef70202f3070", size = 463980, upload-time = "2025-07-29T14:35:27.866Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1b/2a/d295013eb67b5bb3a0ebff7c6ae3f635a8f55929b3f5367889ddadd7f4dd/pyroute2-0.9.7.tar.gz", hash = "sha256:a678b098478c46ec51d6bf9a03c3cd2ac0172dffa590e9e8c1eeab633d0c17c6", size = 493409, upload-time = "2026-10-23T15:27:48.964Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e2/89/c011b555ccde0e5846ad3bb5a091fd0fcac997156406a9ad107f81cf91c9/pyroute2-0.9.4-py3-none-any.whl", hash = "sha256:4e12437d18f6f42912cbd3f870edf06896183a78fd0c8126ba7a72a81f28d6cf", size = 467555, upload-time = "2025-07-29T14:35:23.88Z" },
+    { url = "https://files.pythonhosted.org/packages/6c/4e/d9ce0ff4b50da558a075a647ccb39074b7943cff26e8450a35a32c6e2948/pyroute2-0.9.7-py3-none-any.whl", hash = "sha256:01a2a3afe565a6acb0a0d5d8ac86c9682b6564407e3d9589070191ae94b737e8", size = 491864, upload-time = "2026-10-23T15:27:43.335Z" },
 ]
 
 [[package]]
