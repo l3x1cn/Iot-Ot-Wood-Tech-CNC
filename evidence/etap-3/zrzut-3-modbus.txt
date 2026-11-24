@@ -1,0 +1,37 @@
+# Zrzut 3: Modbus TCP z biura do PLC odpylania
+# Nagranie: v0-zaklad.pcap, filtr Wiresharka: modbus
+# Zrzut z tshark (dekodery Wiresharka), opis w README.md.
+
+  453  46.658911   10.10.0.66 → 10.10.0.21   Modbus/TCP 78    Query: Trans:     1; Unit:   1, Func:   3: Read Holding Registers
+  455  46.659566   10.10.0.21 → 10.10.0.66   Modbus/TCP 81 Response: Trans:     1; Unit:   1, Func:   3: Read Holding Registers
+  457  46.659765   10.10.0.66 → 10.10.0.21   Modbus/TCP 78    Query: Trans:     2; Unit:   1, Func:   1: Read Coils
+  458  46.660017   10.10.0.21 → 10.10.0.66   Modbus/TCP 76 Response: Trans:     2; Unit:   1, Func:   1: Read Coils
+  459  46.660110   10.10.0.66 → 10.10.0.21   Modbus/TCP 78    Query: Trans:     3; Unit:   1, Func:   5: Write Single Coil
+  460  46.660277   10.10.0.21 → 10.10.0.66   Modbus/TCP 78 Response: Trans:     3; Unit:   1, Func:   5: Write Single Coil
+  492  51.660478   10.10.0.66 → 10.10.0.21   Modbus/TCP 78    Query: Trans:     4; Unit:   1, Func:   3: Read Holding Registers
+  493  51.660915   10.10.0.21 → 10.10.0.66   Modbus/TCP 81 Response: Trans:     4; Unit:   1, Func:   3: Read Holding Registers
+  495  51.661087   10.10.0.66 → 10.10.0.21   Modbus/TCP 78    Query: Trans:     5; Unit:   1, Func:   5: Write Single Coil
+  496  51.661285   10.10.0.21 → 10.10.0.66   Modbus/TCP 78 Response: Trans:     5; Unit:   1, Func:   5: Write Single Coil
+
+Frame 459: Packet, 78 bytes on wire (624 bits), 78 bytes captured (624 bits)
+Ethernet II, Src: 0a:ef:ba:5c:2f:98, Dst: 16:33:08:f8:1d:36
+Internet Protocol Version 4, Src: 10.10.0.66, Dst: 10.10.0.21
+Transmission Control Protocol, Src Port: 36736, Dst Port: 502, Seq: 25, Ack: 26, Len: 12
+Modbus/TCP
+    Transaction Identifier: 3
+    Protocol Identifier: 0
+    Length: 6
+    Unit Identifier: 1
+Modbus
+    0... .... = Exception: No
+    .000 0101 = Function Code: Write Single Coil (5)
+    Reference Number: 0
+    Data: 0000
+    Padding: 0x00
+
+0000  16 33 08 f8 1d 36 0a ef ba 5c 2f 98 08 00 45 00   .3...6...\/...E.
+0010  00 40 dd 94 40 00 40 06 48 b9 0a 0a 00 42 0a 0a   .@..@.@.H....B..
+0020  00 15 8f 80 01 f6 76 3a 8d 49 c6 26 5c 50 80 18   ......v:.I.&\P..
+0030  01 f6 14 9d 00 00 01 01 08 0a 1d 6b d7 42 d0 0d   ...........k.B..
+0040  53 0d 00 03 00 00 00 06 01 05 00 00 00 00         S.............
+

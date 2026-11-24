@@ -1,0 +1,54 @@
+# Zrzut 2: G-code wysłany ze stacji CAD na cnc-1 jawnym HTTP
+# Nagranie: v0-zaklad.pcap, filtr Wiresharka: http.request.method == "POST" && ip.dst == 10.10.0.11
+# Zrzut z tshark (dekodery Wiresharka), opis w README.md.
+
+   74   1.683011   10.10.0.41 → 10.10.0.11   HTTP 255 POST /program HTTP/1.1  (application/x-www-form-urlencoded)
+  587  61.690166   10.10.0.41 → 10.10.0.11   HTTP 255 POST /program HTTP/1.1  (application/x-www-form-urlencoded)
+
+
+===================================================================
+Follow: tcp,ascii
+Filter: tcp.stream eq 4
+Node 0: 10.10.0.41:55672
+Node 1: 10.10.0.11:8080
+218
+POST /program HTTP/1.1
+Accept-Encoding: identity
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 189
+Host: cnc-1:8080
+User-Agent: Python-urllib/3.13
+X-Program: blat-stolu.nc
+Connection: close
+
+
+189
+; Blat stolu 1200x800, plyta MDF 18 mm, frez 8 mm
+G21 G90
+M3 S18000
+G0 Z5
+G0 X0 Y0
+G1 Z-6 F1500
+G1 X1200 F3000
+G1 Y800
+G1 X0
+G1 Y0
+G1 Z-12 F1500
+G1 X1200 F3000
+G1 Y800
+G1 X0
+G1 Y0
+G0 Z5
+M5
+
+	146
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.13.18
+Date: Tue, 24 Nov 2026 22:30:25 GMT
+Content-Type: application/json
+Content-Length: 117
+
+
+	117
+{"nazwa": "blat-stolu.nc", "sha256": "7633861ec8c20eaefcc9a85f6a22098be069b8c76e4ca82041faf51f3c9d3e25", "ruchy": 13}
+===================================================================
