@@ -129,4 +129,4 @@ flowchart TB
 
    Przy podziale na strefy w T05 każde z nich dostaje jednego właściciela.
 
-Poza zakresem inwentaryzacji jest host labu (Debian z Dockerem): to infrastruktura symulacji, a nie aktywo fabryki. Aktywa dochodzące w `v1` (lokalny broker MQTT, Node-RED, zapory fw-it i fw-ot, ESP32 w QEMU) opisze T05.
+Poza zakresem inwentaryzacji jest host labu (Debian z Dockerem): to infrastruktura symulacji, a nie aktywo fabryki. Aktywa dochodzące w `v1` (lokalny broker MQTT, Node-RED, zapory fw-it i fw-ot, ESP32 w QEMU) opisuje [model stref i conduitów](strefy-i-conduity.md) (T05).
