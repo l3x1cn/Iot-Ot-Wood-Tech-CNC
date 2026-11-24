@@ -127,3 +127,5 @@ Trzy pierwsze potwierdzają testy `v0` w [tests/security](../../tests/security/t
 2. Komendy START/STOP (F02, F07) to jedyny przepływ sterowania z chmury do maszyn. Trzeba zdecydować, czy w ogóle zostaje, a jeśli tak, to z uwierzytelnieniem i ACL.
 3. Między L3 a komórką (GZ3) potrzebny jest tylko kanał G-code ze stacji CAD/CAM (F05), a w szafie odpylania tylko Modbus z panelu (F09).
 4. Jedyny potrzebny przepływ przez granicę IT ↔ OT (GZ2) to plan zleceń (F12). W `v1` powinien przechodzić przez IDMZ, a nie wprost z biura.
+
+Jak `v1` realizuje każdy przepływ, opisuje [model stref i conduitów](strefy-i-conduity.md) (T05).

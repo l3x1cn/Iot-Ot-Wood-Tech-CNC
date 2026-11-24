@@ -18,8 +18,8 @@ Asset Inventory, DFD, model Purdue, Zones & Conduits, SL-T. Oddanie: tabela inwe
 | Zadanie | Cel | Zależy od | Stan |
 |---|---|---|---|
 | [T03](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/5) Asset Inventory | Pełna inwentaryzacja aktywów stanu as-is, z której wynikają strefy i poziomy Purdue. | [T02](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/4) | zamknięte |
-| [T04](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/6) Data Flow Diagram | Przepływy danych v0 z protokołami i granicami zaufania jako podstawa STRIDE i reguł zapór. | [T03](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/5) | w toku |
-| [T05](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/7) Model Purdue i Zones & Conduits | Docelowy podział sieci na strefy i kanały zgodnie z IEC 62443, z IDMZ na poziomie 3.5. | [T04](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/6) | do zrobienia |
+| [T04](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/6) Data Flow Diagram | Przepływy danych v0 z protokołami i granicami zaufania jako podstawa STRIDE i reguł zapór. | [T03](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/5) | zamknięte |
+| [T05](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/7) Model Purdue i Zones & Conduits | Docelowy podział sieci na strefy i kanały zgodnie z IEC 62443, z IDMZ na poziomie 3.5. | [T04](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/6) | w toku |
 | [T06](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/8) SL-T | Uzasadniony docelowy poziom bezpieczeństwa dla każdej strefy. | [T05](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/7) | do zrobienia |
 | [T07](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/9) Sprawozdanie Etapów 1–2 | Sprawozdanie cząstkowe Etapów 1–2 dla prowadzącego. | [T03](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/5), [T04](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/6), [T05](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/7), [T06](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/8) | do zrobienia |
 
