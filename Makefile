@@ -9,7 +9,7 @@ V0 := docker compose -f lab/v0/compose.yaml --profile atak
 CZAS ?= 60
 
 .PHONY: help doctor lint unit gitleaks trivy-config test-security \
-        v0-up v0-up-atak v0-down v0-status v0-logs v0-mqtt v0-capture
+        v0-up v0-up-atak v0-down v0-status v0-logs v0-mqtt v0-capture v0-nagranie v0-przeplywy
 
 help:
 	@echo "make doctor        narzedzia z mise.toml, Docker bez sudo, compose, pamiec"
@@ -24,6 +24,8 @@ help:
 	@echo "make v0-logs       logi JSON symulatorow (Ctrl+C konczy)"
 	@echo "make v0-mqtt       podglad wszystkich wiadomosci MQTT w chmurze (Ctrl+C konczy)"
 	@echo "make v0-capture    zapis ruchu sieci zakladu do evidence/v0-<data>.pcap (CZAS=$(CZAS) s, wymaga sudo)"
+	@echo "make v0-nagranie   start labu z nagrywaniem obu sieci od pierwszego pakietu (CZAS=$(CZAS) s, bez sudo)"
+	@echo "make v0-przeplywy  polaczenia widoczne w pliku pcap (PCAP=plik.pcap), do porownania z tabela przeplywow"
 	@echo "make v0-down       zatrzymuje i usuwa kontenery i sieci labu v0"
 
 doctor:
@@ -77,3 +79,27 @@ v0-mqtt:
 v0-capture:
 	@mkdir -p evidence
 	sudo timeout $(CZAS) tcpdump -i wt0-zaklad -w evidence/v0-$$(date +%Y%m%d-%H%M%S).pcap || true
+
+# Start labu z nagrywaniem od pierwszego pakietu, na obu sieciach (wt0-zaklad i wt0-internet), bez sudo
+# i bez tcpdump na hoście: tcpdump z obrazu routera w sieci hosta. Lab musi być wyłączony (make v0-down).
+# Wynik: evidence/v0-<data>-zaklad.pcap i evidence/v0-<data>-internet.pcap.
+NAGRYWARKA = docker run -d --rm --net host --cap-add NET_RAW --cap-add NET_ADMIN -v "$(CURDIR)/evidence:/cap" \
+	--entrypoint timeout
+v0-nagranie:
+	@mkdir -p evidence
+	$(V0) up --no-start cnc-1 cnc-2 plc-odpylanie serwer cad-stacja
+	@t=$$(date +%Y%m%d-%H%M%S); \
+	for siec in zaklad internet; do \
+	  $(NAGRYWARKA) --name wt-nagranie-$$siec wood-tech/router:dev $(CZAS) \
+	    tcpdump -i wt0-$$siec -nn -U -w /cap/v0-$$t-$$siec.pcap >/dev/null; \
+	done; \
+	sleep 2; $(V0) up -d cnc-1 cnc-2 plc-odpylanie serwer cad-stacja; \
+	echo "nagrywanie $(CZAS) s do evidence/v0-$$t-zaklad.pcap i evidence/v0-$$t-internet.pcap"; \
+	docker wait wt-nagranie-zaklad wt-nagranie-internet >/dev/null
+
+# Połączenia widoczne w nagraniu: początki połączeń TCP i datagramy UDP, każde raz.
+# Porównujemy je z tabelą przepływów w docs/architektura/przeplywy-danych.md. tcpdump z obrazu routera.
+v0-przeplywy:
+	@test -n "$(PCAP)" || { echo "podaj plik: make v0-przeplywy PCAP=evidence/v0-<data>-zaklad.pcap"; exit 1; }
+	@docker run --rm -v "$(CURDIR):/repo:ro" -w /repo --entrypoint tcpdump wood-tech/router:dev \
+	  -nn -q -r $(PCAP) 'tcp[tcpflags] == tcp-syn or udp' 2>/dev/null | python3 scripts/przeplywy.py

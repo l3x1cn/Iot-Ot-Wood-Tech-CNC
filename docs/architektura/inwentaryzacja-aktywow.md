@@ -42,7 +42,7 @@ Poziom Purdue wynika z funkcji aktywa, a nie z miejsca w sieci. W `v0` sieć teg
 | A07 | Router zakładowy z NAT | `router` | L4 (brzeg z L5) | 10.10.0.254, 203.0.113.2 | routing IPv4 i NAT (nftables), bez filtrowania | IT | Wysoka |
 | A08 | Sieć zakładu: wspólny przełącznik biura, serwerowni i hali | sieć `zaklad` | L1–L4 (wspólna) | 10.10.0.0/24 | Ethernet; cały ruch lokalny (HTTP, Modbus TCP, MQTT) | IT | Krytyczna |
 | A09 | Broker MQTT w chmurze | `chmura-mqtt` | L5 | 203.0.113.10 | MQTT 1883/tcp, bez TLS, anonimowy, bez ACL | OT | Krytyczna |
-| A10 | Panel HMI operatora przy obrabiarce | poza symulacją | L2 | — | lokalne sterowanie maszyną; w labie START/STOP idzie tylko przez MQTT | OT | Wysoka |
+| A10 | Panele HMI operatorów (obrabiarki, szafa odpylania) | poza symulacją | L2 | — | lokalne sterowanie maszynami i odpylaniem (Modbus TCP 502/tcp do A03); w labie START/STOP idzie tylko przez MQTT | OT | Wysoka |
 | A11 | Węzeł ESP32 z czujnikiem prądu wrzeciona | poza symulacją | L1 (L0: przekładnik prądowy) | — | Wi-Fi, MQTT; w `v1` emulowany w QEMU (Etap 5) | OT | Wysoka |
 | A12 | Wi-Fi biura i hali z telefonami pracowników | poza symulacją | L4 | — | Wi-Fi z hasłem wspólnym, ta sama pula adresów co hala | IT | Wysoka |
 | A13 | Harmonogramy produkcji (ERP albo arkusze) | poza symulacją | L4 | — | HTTPS, udział plików | IT | Średnia |
@@ -59,7 +59,7 @@ Poziom Purdue wynika z funkcji aktywa, a nie z miejsca w sieci. W `v0` sieć teg
 | A07 | wyjście zakładu do internetu | cały ruch do chmury, w tym jawna telemetria MQTT | awaria odcina chmurę, a maszyny pracują dalej; przejęcie daje podsłuch i modyfikację całego ruchu do chmury |
 | A08 | jedna sieć L2 dla wszystkich urządzeń | cały ruch lokalny | awaria zatrzymuje wysyłkę programów i sterowanie odpylaniem; brak podziału pozwala każdemu urządzeniu połączyć się z każdym |
 | A09 | odbiór telemetrii i przekazywanie komend do maszyn | telemetria wszystkich maszyn, stan odpylania, komendy START/STOP | kto opublikuje na `wood-tech/hala1/<cnc>/komenda`, ten zatrzyma albo uruchomi obrabiarkę |
-| A10 | podgląd stanu i lokalne sterowanie maszyną przez operatora | stan maszyny, komendy operatora | bez HMI operator traci podgląd i szybkie zatrzymanie z panelu |
+| A10 | podgląd stanu i lokalne sterowanie maszynami i odpylaniem przez operatora | stan maszyn i odpylania, komendy operatora | bez HMI operator traci podgląd i szybkie zatrzymanie z panelu |
 | A11 | pomiar prądu wrzeciona; w `v1` lokalna detekcja anomalii (TinyML) i alarm bez chmury | próbki prądu | bez niego zmieniony program albo przeciążenie wykryjemy dopiero po skutkach |
 | A12 | dostęp do sieci dla biura i hali | ruch pracowników i ich telefonów | dowolny telefon z hasłem do Wi-Fi jest w tej samej sieci co maszyny |
 | A13 | planowanie zleceń na maszyny | harmonogramy produkcji | błędny plan opóźnia zlecenia, ale da się go poprawić ręcznie |
@@ -94,7 +94,7 @@ flowchart TB
         A05["A05 cad-stacja"]
     end
     subgraph L2["L2 · nadzór"]
-        A10["A10 panel HMI *"]
+        A10["A10 panele HMI *"]
     end
     subgraph L1["L1 · sterowanie"]
         A01["A01 cnc-1"]
