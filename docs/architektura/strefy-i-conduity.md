@@ -1,6 +1,6 @@
 # Model Purdue, strefy i conduity (stan docelowy, `v1`)
 
-Etap 2, zadanie T05. Dokument dzieli zakład na strefy i łączące je conduity według IEC 62443-3-2, z IDMZ na poziomie 3.5 między dwiema zaporami. Wychodzi z [inwentaryzacji](inwentaryzacja-aktywow.md) (aktywa `Axx`) i [przepływów danych](przeplywy-danych.md) (przepływy `Fxx`): każdy przepływ z DFD ma kanał w conduicie albo jest celowo zablokowany. Lab `v1` (T09) realizuje tabele kanałów i zapór regułami nftables, a SL-T dla stref uzasadnia T06.
+Etap 2, zadanie T05. Dokument dzieli zakład na strefy i łączące je conduity według IEC 62443-3-2, z IDMZ na poziomie 3.5 między dwiema zaporami. Wychodzi z [inwentaryzacji](inwentaryzacja-aktywow.md) (aktywa `Axx`) i [przepływów danych](przeplywy-danych.md) (przepływy `Fxx`): każdy przepływ z DFD ma kanał w conduicie albo jest celowo zablokowany. Lab `v1` (T09) realizuje tabele kanałów i zapór regułami nftables, a [SL-T stref](sl-t.md) uzasadnia T06.
 
 ## Zasady podziału
 
