@@ -1,0 +1,13 @@
+# Połączenia w ruchu labu v0 (praca normalna, bez biuro-pc), nagrane 24.11.2026 przez 140 s od startu labu (make v0-nagranie).
+# Pliki: v0-zaklad.pcap (most wt0-zaklad), v0-internet.pcap (most wt0-internet, po NAT routera).
+# Odtworzenie listy: make v0-przeplywy PCAP=evidence/etap-1-2/v0-zaklad.pcap
+# Format: interfejs protokół inicjator -> serwer:port liczba_połączeń.
+# wt0-zaklad: poza połączeniami tylko ARP i ICMPv6 hosta z adresu link-local (MLD, DAD) przy starcie mostu, pakietów: 7.
+# wt0-internet: poza połączeniami tylko ARP i ICMPv6 hosta z adresu link-local (MLD, DAD) przy starcie mostu, pakietów: 7.
+wt0-zaklad tcp 10.10.0.11 -> 203.0.113.10:1883 1
+wt0-zaklad tcp 10.10.0.12 -> 203.0.113.10:1883 1
+wt0-zaklad tcp 10.10.0.21 -> 203.0.113.10:1883 1
+wt0-zaklad tcp 10.10.0.41 -> 10.10.0.11:8080 3
+wt0-zaklad tcp 10.10.0.41 -> 10.10.0.12:8080 2
+wt0-zaklad tcp 10.10.0.41 -> 10.10.0.31:80 5
+wt0-internet tcp 203.0.113.2 -> 203.0.113.10:1883 3
