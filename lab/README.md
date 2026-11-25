@@ -77,6 +77,7 @@ Wszystko, co przechodzi przez sieć zakładu, widać na interfejsie `wt0-zaklad`
 ```bash
 make v0-capture CZAS=120   # zapis do evidence/v0-<data>.pcap
 make v0-nagranie CZAS=140  # bez sudo: start labu z nagrywaniem obu sieci od pierwszego pakietu
+make v0-analiza            # nagranie ze scenariuszem ataku z biura i zrzuty tshark (evidence/etap-3/)
 ```
 
 Na żywo z Windowsa (Wireshark w `C:\Program Files\Wireshark`):

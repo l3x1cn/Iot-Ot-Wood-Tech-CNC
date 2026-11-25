@@ -1,0 +1,50 @@
+# Zrzut 1: telemetria wrzeciona cnc-1 w internecie
+# Nagranie: v0-internet.pcap, filtr Wiresharka: mqtt.topic contains "cnc-1/telemetria"
+# Zrzut z tshark (dekodery Wiresharka), opis w README.md.
+
+   48   2.455971  203.0.113.2 → 203.0.113.10 MQTT 369 Publish Message [wood-tech/hala1/cnc-1/telemetria]
+   55   3.457434  203.0.113.2 → 203.0.113.10 MQTT 371 Publish Message [wood-tech/hala1/cnc-1/telemetria]
+   61   4.458857  203.0.113.2 → 203.0.113.10 MQTT 370 Publish Message [wood-tech/hala1/cnc-1/telemetria]
+   67   5.460338  203.0.113.2 → 203.0.113.10 MQTT 375 Publish Message [wood-tech/hala1/cnc-1/telemetria]
+   73   6.461863  203.0.113.2 → 203.0.113.10 MQTT 375 Publish Message [wood-tech/hala1/cnc-1/telemetria]
+
+Frame 48: Packet, 369 bytes on wire (2952 bits), 369 bytes captured (2952 bits)
+Ethernet II, Src: 06:ec:76:7c:8a:39, Dst: 82:90:81:6e:3b:f0
+Internet Protocol Version 4, Src: 203.0.113.2, Dst: 203.0.113.10
+Transmission Control Protocol, Src Port: 44961, Dst Port: 1883, Seq: 56, Ack: 10, Len: 303
+MQ Telemetry Transport Protocol, Publish Message
+    Header Flags: 0x30, Message Type: Publish Message, QoS Level: At most once delivery (Fire and Forget)
+        0011 .... = Message Type: Publish Message (3)
+        .... 0... = DUP Flag: Not set
+        .... .00. = QoS Level: At most once delivery (Fire and Forget) (0)
+        .... ...0 = Retain: Not set
+    Msg Len: 300
+    Topic Length: 32
+    Topic: wood-tech/hala1/cnc-1/telemetria
+    Message […]: {"cnc": "cnc-1", "pracuje": true, "program": "blat-stolu.nc", "sha256": "7633861ec8c20eaefcc9a85f6a22098be069b8c76e4ca82041faf51f3c9d3e25", "linia": 4, "wrzeciono": true, "obroty_rpm": 18000.0, "posuw_mm_min": 0.0, "z_mm": 5
+
+0000  82 90 81 6e 3b f0 06 ec 76 7c 8a 39 08 00 45 00   ...n;...v|.9..E.
+0010  01 63 06 06 40 00 3f 06 bc 81 cb 00 71 02 cb 00   .c..@.?.....q...
+0020  71 0a af a1 07 5b 2d 5a fe 95 4d 53 93 47 80 18   q....[-Z..MS.G..
+0030  01 f6 79 63 00 00 01 01 08 0a 91 51 22 92 7e fa   ..yc.......Q".~.
+0040  15 ee 30 ac 02 00 20 77 6f 6f 64 2d 74 65 63 68   ..0... wood-tech
+0050  2f 68 61 6c 61 31 2f 63 6e 63 2d 31 2f 74 65 6c   /hala1/cnc-1/tel
+0060  65 6d 65 74 72 69 61 7b 22 63 6e 63 22 3a 20 22   emetria{"cnc": "
+0070  63 6e 63 2d 31 22 2c 20 22 70 72 61 63 75 6a 65   cnc-1", "pracuje
+0080  22 3a 20 74 72 75 65 2c 20 22 70 72 6f 67 72 61   ": true, "progra
+0090  6d 22 3a 20 22 62 6c 61 74 2d 73 74 6f 6c 75 2e   m": "blat-stolu.
+00a0  6e 63 22 2c 20 22 73 68 61 32 35 36 22 3a 20 22   nc", "sha256": "
+00b0  37 36 33 33 38 36 31 65 63 38 63 32 30 65 61 65   7633861ec8c20eae
+00c0  66 63 63 39 61 38 35 66 36 61 32 32 30 39 38 62   fcc9a85f6a22098b
+00d0  65 30 36 39 62 38 63 37 36 65 34 63 61 38 32 30   e069b8c76e4ca820
+00e0  34 31 66 61 66 35 31 66 33 63 39 64 33 65 32 35   41faf51f3c9d3e25
+00f0  22 2c 20 22 6c 69 6e 69 61 22 3a 20 34 2c 20 22   ", "linia": 4, "
+0100  77 72 7a 65 63 69 6f 6e 6f 22 3a 20 74 72 75 65   wrzeciono": true
+0110  2c 20 22 6f 62 72 6f 74 79 5f 72 70 6d 22 3a 20   , "obroty_rpm": 
+0120  31 38 30 30 30 2e 30 2c 20 22 70 6f 73 75 77 5f   18000.0, "posuw_
+0130  6d 6d 5f 6d 69 6e 22 3a 20 30 2e 30 2c 20 22 7a   mm_min": 0.0, "z
+0140  5f 6d 6d 22 3a 20 35 2e 30 2c 20 22 70 72 61 64   _mm": 5.0, "prad
+0150  5f 41 22 3a 20 32 2e 38 2c 20 22 74 65 6d 70 65   _A": 2.8, "tempe
+0160  72 61 74 75 72 61 5f 43 22 3a 20 32 34 2e 30 35   ratura_C": 24.05
+0170  7d                                                }
+

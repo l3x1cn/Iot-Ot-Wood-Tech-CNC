@@ -1,0 +1,60 @@
+# Zrzut 5: biuro łączy się z brokerem bez hasła i subskrybuje wszystkie tematy
+# Nagranie: v0-zaklad.pcap, filtr Wiresharka: ip.addr == 10.10.0.66 && (mqtt.msgtype == 1 || mqtt.msgtype == 8)
+# Zrzut z tshark (dekodery Wiresharka), opis w README.md.
+
+  395  41.514525   10.10.0.66 → 203.0.113.10 MQTT 80 Connect Command
+  399  41.515700   10.10.0.66 → 203.0.113.10 MQTT 74 Subscribe Request (id=1) [#]
+  651  68.789690   10.10.0.66 → 203.0.113.10 MQTT 80 Connect Command
+  729  78.901227   10.10.0.66 → 203.0.113.10 MQTT 80 Connect Command
+
+Frame 395: Packet, 80 bytes on wire (640 bits), 80 bytes captured (640 bits)
+Ethernet II, Src: 0a:ef:ba:5c:2f:98, Dst: f2:78:25:ed:6a:97
+Internet Protocol Version 4, Src: 10.10.0.66, Dst: 203.0.113.10
+Transmission Control Protocol, Src Port: 54122, Dst Port: 1883, Seq: 1, Ack: 1, Len: 14
+MQ Telemetry Transport Protocol, Connect Command
+    Header Flags: 0x10, Message Type: Connect Command
+        0001 .... = Message Type: Connect Command (1)
+        .... 0000 = Reserved: 0
+    Msg Len: 12
+    Protocol Name Length: 4
+    Protocol Name: MQTT
+    Version: MQTT v3.1.1 (4)
+    Connect Flags: 0x02, QoS Level: At most once delivery (Fire and Forget), Clean Session Flag
+        0... .... = User Name Flag: Not set
+        .0.. .... = Password Flag: Not set
+        ..0. .... = Will Retain: Not set
+        ...0 0... = QoS Level: At most once delivery (Fire and Forget) (0)
+        .... .0.. = Will Flag: Not set
+        .... ..1. = Clean Session Flag: Set
+        .... ...0 = (Reserved): Not set
+    Keep Alive: 60
+    Client ID Length: 0
+    Client ID: 
+
+0000  f2 78 25 ed 6a 97 0a ef ba 5c 2f 98 08 00 45 00   .x%.j....\/...E.
+0010  00 42 72 a1 40 00 40 06 81 be 0a 0a 00 42 cb 00   .Br.@.@......B..
+0020  71 0a d3 6a 07 5b 0b 5d f1 c3 d3 46 80 fb 80 18   q..j.[.]...F....
+0030  01 f6 46 8b 00 00 01 01 08 0a 7f 1c e4 2b 7e fa   ..F..........+~.
+0040  b2 36 10 0c 00 04 4d 51 54 54 04 02 00 3c 00 00   .6....MQTT...<..
+
+
+Frame 399: Packet, 74 bytes on wire (592 bits), 74 bytes captured (592 bits)
+Ethernet II, Src: 0a:ef:ba:5c:2f:98, Dst: f2:78:25:ed:6a:97
+Internet Protocol Version 4, Src: 10.10.0.66, Dst: 203.0.113.10
+Transmission Control Protocol, Src Port: 54122, Dst Port: 1883, Seq: 15, Ack: 5, Len: 8
+MQ Telemetry Transport Protocol, Subscribe Request
+    Header Flags: 0x82, Message Type: Subscribe Request
+        1000 .... = Message Type: Subscribe Request (8)
+        .... 0010 = Reserved: 2
+    Msg Len: 6
+    Message Identifier: 1
+    Topic Length: 1
+    Topic: #
+    Requested QoS: At most once delivery (Fire and Forget) (0)
+
+0000  f2 78 25 ed 6a 97 0a ef ba 5c 2f 98 08 00 45 00   .x%.j....\/...E.
+0010  00 3c 72 a3 40 00 40 06 81 c2 0a 0a 00 42 cb 00   .<r.@.@......B..
+0020  71 0a d3 6a 07 5b 0b 5d f1 d1 d3 46 80 ff 80 18   q..j.[.]...F....
+0030  01 f6 46 85 00 00 01 01 08 0a 7f 1c e4 2c 7e fa   ..F..........,~.
+0040  b2 37 82 06 00 01 00 01 23 00                     .7......#.
+

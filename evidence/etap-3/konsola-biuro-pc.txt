@@ -1,0 +1,41 @@
+biuro-pc$ mosquitto_sub -h mqtt.chmura.example -t '#' -v -C 6 -W 10
+wood-tech/hala1/odpylanie/stan {"plc": "plc-odpylanie", "wentylator": true, "przepustnica": true, "obroty_rpm": 2899, "podcisnienie_Pa": 1513, "pyl_mg_m3": 4.0}
+wood-tech/hala1/cnc-2/telemetria {"cnc": "cnc-2", "pracuje": true, "program": "front-szafki.nc", "sha256": "04761c0e927c0a655a387e0eeb12494d78397219bf36f14754123509b8130e80", "linia": 11, "wrzeciono": true, "obroty_rpm": 20000.0, "posuw_mm_min": 2500.0, "z_mm": -4.0, "prad_A": 5.065, "temperatura_C": 25.05}
+wood-tech/hala1/cnc-1/telemetria {"cnc": "cnc-1", "pracuje": false, "program": "blat-stolu.nc", "sha256": "7633861ec8c20eaefcc9a85f6a22098be069b8c76e4ca82041faf51f3c9d3e25", "linia": null, "wrzeciono": false, "obroty_rpm": 0.0, "posuw_mm_min": 0.0, "z_mm": 5.0, "prad_A": 0.306, "temperatura_C": 26.16}
+wood-tech/hala1/odpylanie/stan {"plc": "plc-odpylanie", "wentylator": true, "przepustnica": true, "obroty_rpm": 2899, "podcisnienie_Pa": 1513, "pyl_mg_m3": 4.0}
+wood-tech/hala1/cnc-2/telemetria {"cnc": "cnc-2", "pracuje": true, "program": "front-szafki.nc", "sha256": "04761c0e927c0a655a387e0eeb12494d78397219bf36f14754123509b8130e80", "linia": 11, "wrzeciono": true, "obroty_rpm": 20000.0, "posuw_mm_min": 2500.0, "z_mm": 5.0, "prad_A": 2.956, "temperatura_C": 25.1}
+wood-tech/hala1/cnc-1/telemetria {"cnc": "cnc-1", "pracuje": false, "program": "blat-stolu.nc", "sha256": "7633861ec8c20eaefcc9a85f6a22098be069b8c76e4ca82041faf51f3c9d3e25", "linia": null, "wrzeciono": false, "obroty_rpm": 0.0, "posuw_mm_min": 0.0, "z_mm": 5.0, "prad_A": 0.296, "temperatura_C": 26.15}
+
+biuro-pc$ python3 -c '
+import time
+from pymodbus.client import ModbusTcpClient
+plc = ModbusTcpClient('plc-odpylanie', port=502, timeout=3)
+assert plc.connect()
+print('rejestry 0-2 (obroty rpm, podcisnienie Pa, pyl mg/m3*10):', plc.read_holding_registers(0, count=3).registers)
+print('cewki 0-1 (wentylator, przepustnica):', plc.read_coils(0, count=2).bits[:2])
+plc.write_coil(0, False)
+print('zapis cewki 0 = 0: wentylator wylaczony')
+time.sleep(5)
+print('rejestry po 5 s:', plc.read_holding_registers(0, count=3).registers)
+plc.write_coil(0, True)
+print('zapis cewki 0 = 1: wentylator wlaczony')
+plc.close()
+'
+rejestry 0-2 (obroty rpm, podcisnienie Pa, pyl mg/m3*10): [2899, 1513, 40]
+cewki 0-1 (wentylator, przepustnica): [True, True]
+zapis cewki 0 = 0: wentylator wylaczony
+rejestry po 5 s: [487, 42, 62]
+zapis cewki 0 = 1: wentylator wlaczony
+
+biuro-pc$ mosquitto_pub -h mqtt.chmura.example -t wood-tech/hala1/cnc-1/komenda -m STOP -d
+Client null sending CONNECT
+Client null received CONNACK (0)
+Client null sending PUBLISH (d0, q0, r0, m1, 'wood-tech/hala1/cnc-1/komenda', ... (4 bytes))
+Client null sending DISCONNECT
+
+biuro-pc$ mosquitto_pub -h mqtt.chmura.example -t wood-tech/hala1/cnc-1/komenda -m START -d
+Client null sending CONNECT
+Client null received CONNACK (0)
+Client null sending PUBLISH (d0, q0, r0, m1, 'wood-tech/hala1/cnc-1/komenda', ... (5 bytes))
+Client null sending DISCONNECT
+
