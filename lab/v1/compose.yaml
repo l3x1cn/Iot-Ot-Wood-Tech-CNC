@@ -1,0 +1,163 @@
+# Lab v1: sieć zabezpieczona (stan to-be ze scenariusza Wood-Tech CNC, T09).
+#
+# Realizuje model stref i conduitów z docs/architektura/strefy-i-conduity.md:
+# - każda strefa to osobna sieć Dockera (Z1 komórka, Z2 odpylanie, Z3 nadzór, Z4 operacje,
+#   Z5 IDMZ, Z6 biuro, Z8 internet i chmura; Z7 Wi-Fi poza symulacją);
+# - dwie zapory nftables z polityką drop: fw-ot między strefami OT a IDMZ, fw-it między IDMZ,
+#   biurem i internetem. Biuro i OT nie mają wspólnej zapory, więc nie ma z biura drogi do OT;
+# - maszyny publikują telemetrię do lokalnego brokera A14 w Z4 (nie wprost do chmury);
+# - ruch między strefami idzie tylko przez zaporę: hosty mają trasę domyślną przez swój interfejs
+#   zapory, a Docker izoluje mosty, więc host nie przełoży pakietu między strefami z pominięciem zapory.
+#
+# Na razie (do T10) MQTT działa jawnie na 1883 i broker jest anonimowy; TLS daje T10, ACL T11,
+# bramkę Node-RED do chmury T12. Kanały C05/C06/C08/C10 dotyczą aktywów poza symulacją.
+#
+# Uruchomienie: make v1-up (lab) albo make v1-up-atak (z komputerem biurowym do testów segmentacji).
+name: wt-v1
+
+x-sim: &sim
+  build: ../obrazy/sim
+  image: wood-tech/sim:dev
+  cap_add: [NET_ADMIN]   # tylko do ustawienia trasy domyślnej przez zaporę (wtsim.brama)
+  restart: unless-stopped
+  mem_limit: 96m
+
+networks:
+  z1-komorka:
+    driver_opts: { com.docker.network.bridge.name: wt1-z1, com.docker.network.bridge.enable_ip_masquerade: "false" }
+    ipam: { config: [{ subnet: 10.10.11.0/24 }] }
+  z2-odpylanie:
+    driver_opts: { com.docker.network.bridge.name: wt1-z2, com.docker.network.bridge.enable_ip_masquerade: "false" }
+    ipam: { config: [{ subnet: 10.10.12.0/24 }] }
+  z3-nadzor:
+    driver_opts: { com.docker.network.bridge.name: wt1-z3, com.docker.network.bridge.enable_ip_masquerade: "false" }
+    ipam: { config: [{ subnet: 10.10.20.0/24 }] }
+  z4-operacje:
+    driver_opts: { com.docker.network.bridge.name: wt1-z4, com.docker.network.bridge.enable_ip_masquerade: "false" }
+    ipam: { config: [{ subnet: 10.10.30.0/24 }] }
+  z5-idmz:
+    driver_opts: { com.docker.network.bridge.name: wt1-z5, com.docker.network.bridge.enable_ip_masquerade: "false" }
+    ipam: { config: [{ subnet: 10.10.35.0/24 }] }
+  z6-biuro:
+    driver_opts: { com.docker.network.bridge.name: wt1-z6, com.docker.network.bridge.enable_ip_masquerade: "false" }
+    ipam: { config: [{ subnet: 10.10.40.0/24 }] }
+  z8-internet:
+    driver_opts: { com.docker.network.bridge.name: wt1-internet, com.docker.network.bridge.enable_ip_masquerade: "false" }
+    ipam: { config: [{ subnet: 203.0.113.0/24 }] }
+
+services:
+  # Zapora OT (A16): styk stref OT (Z1–Z4) z IDMZ (Z5). Reguły conduitów K1–K5 w fw-ot/nftables.nft.
+  fw-ot:
+    build: ../obrazy/router
+    image: wood-tech/router:dev
+    hostname: fw-ot
+    cap_add: [NET_ADMIN, NET_RAW]
+    sysctls: { net.ipv4.ip_forward: "1" }
+    volumes: [./fw-ot/nftables.nft:/etc/router/nftables.nft:ro]
+    networks:
+      z1-komorka: { ipv4_address: 10.10.11.254 }
+      z2-odpylanie: { ipv4_address: 10.10.12.254 }
+      z3-nadzor: { ipv4_address: 10.10.20.254 }
+      z4-operacje: { ipv4_address: 10.10.30.254 }
+      z5-idmz: { ipv4_address: 10.10.35.253 }
+    mem_limit: 48m
+    restart: unless-stopped
+
+  # Zapora IT (A07, dawny router): styk IDMZ (Z5) i biura (Z6) z internetem (Z8). NAT i kanały K6–K9.
+  fw-it:
+    build: ../obrazy/router
+    image: wood-tech/router:dev
+    hostname: fw-it
+    cap_add: [NET_ADMIN, NET_RAW]
+    sysctls: { net.ipv4.ip_forward: "1" }
+    volumes: [./fw-it/nftables.nft:/etc/router/nftables.nft:ro]
+    networks:
+      z5-idmz: { ipv4_address: 10.10.35.254 }
+      z6-biuro: { ipv4_address: 10.10.40.254 }
+      z8-internet: { ipv4_address: 203.0.113.2 }
+    mem_limit: 48m
+    restart: unless-stopped
+
+  # A14: lokalny broker MQTT w strefie operacji. Maszyny piszą tu telemetrię, zamiast wprost do chmury.
+  # Na razie jawny 1883 i anonimowy; TLS daje T10, ACL T11. Trasa zwrotna do Z1/Z2 przez fw-ot.
+  broker-lokalny:
+    image: eclipse-mosquitto:2.0.22
+    hostname: broker-lokalny
+    cap_add: [NET_ADMIN]
+    command: ["/bin/sh", "-c", "ip route replace default via 10.10.30.254 && exec /docker-entrypoint.sh /usr/sbin/mosquitto -c /mosquitto/config/mosquitto.conf"]
+    volumes: [./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro]
+    networks:
+      z4-operacje: { ipv4_address: 10.10.30.14 }
+    mem_limit: 32m
+    restart: unless-stopped
+
+  cnc-1:
+    <<: *sim
+    hostname: cnc-1
+    command: ["python", "-m", "wtsim.cnc"]
+    environment: { BRAMA: 10.10.11.254, CNC_ID: cnc-1, MQTT_HOST: 10.10.30.14, MQTT_PORT: "1883" }
+    networks: { z1-komorka: { ipv4_address: 10.10.11.11 } }
+    depends_on: [fw-ot, broker-lokalny]
+
+  cnc-2:
+    <<: *sim
+    hostname: cnc-2
+    command: ["python", "-m", "wtsim.cnc"]
+    environment: { BRAMA: 10.10.11.254, CNC_ID: cnc-2, MQTT_HOST: 10.10.30.14, MQTT_PORT: "1883" }
+    networks: { z1-komorka: { ipv4_address: 10.10.11.12 } }
+    depends_on: [fw-ot, broker-lokalny]
+
+  plc-odpylanie:
+    <<: *sim
+    hostname: plc-odpylanie
+    command: ["python", "-m", "wtsim.plc"]
+    environment: { BRAMA: 10.10.12.254, PLC_ID: plc-odpylanie, MQTT_HOST: 10.10.30.14, MQTT_PORT: "1883" }
+    networks: { z2-odpylanie: { ipv4_address: 10.10.12.21 } }
+    depends_on: [fw-ot, broker-lokalny]
+
+  # A04: serwer projektów. W strefie operacji razem ze stacją CAD/CAM (przepływ F04 w jednej strefie).
+  serwer:
+    image: nginx:1.28-alpine
+    hostname: serwer
+    volumes: [../v0/serwer/projekty:/usr/share/nginx/html/projekty:ro]
+    networks: { z4-operacje: { ipv4_address: 10.10.30.31 } }
+    mem_limit: 32m
+    restart: unless-stopped
+
+  # A05: stacja CAD/CAM. Pobiera projekty z serwera w tej samej strefie i wysyła G-code na obrabiarki
+  # po IP (kanał C01 przez fw-ot); maszyn nie ma w jej sieci, więc celuje adresem, nie nazwą.
+  cad-stacja:
+    <<: *sim
+    hostname: cad-stacja
+    command: ["python", "-m", "wtsim.cad"]
+    environment:
+      BRAMA: 10.10.30.254
+      MQTT_HOST: 10.10.30.14
+      MQTT_PORT: "1883"
+      SERWER_URL: http://serwer/projekty
+      ZADANIA: 10.10.11.11=blat-stolu.nc,10.10.11.12=front-szafki.nc
+      OKRES: "60"
+    networks: { z4-operacje: { ipv4_address: 10.10.30.41 } }
+    depends_on: [fw-ot, serwer, broker-lokalny]
+
+  # A09: broker w chmurze. W v1 jedynym jego klientem jest bramka Node-RED z IDMZ (T12), więc tu czeka.
+  chmura-mqtt:
+    image: eclipse-mosquitto:2.0.22
+    hostname: chmura-mqtt
+    volumes: [../v0/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro]
+    networks: { z8-internet: { ipv4_address: 203.0.113.10 } }
+    mem_limit: 32m
+    restart: unless-stopped
+
+  # Przejęty komputer biurowy w strefie biura. Uruchamiany tylko z profilem `atak`: make v1-up-atak.
+  # Służy do testów segmentacji: z biura nie ma drogi do stref OT ani do brokera w chmurze.
+  biuro-pc:
+    build: ../obrazy/atakujacy
+    image: wood-tech/atakujacy:dev
+    profiles: [atak]
+    hostname: biuro-pc
+    cap_add: [NET_ADMIN, NET_RAW]
+    environment: { BRAMA: 10.10.40.254 }
+    networks: { z6-biuro: { ipv4_address: 10.10.40.66 } }
+    mem_limit: 128m
+    depends_on: [fw-it]

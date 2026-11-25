@@ -31,3 +31,12 @@ def v0() -> Lab:
     if "biuro-pc" not in wynik.stdout.split():
         pytest.fail("lab v0 nie działa: najpierw make v0-up-atak")
     return lab
+
+
+@pytest.fixture(scope="session")
+def v1() -> Lab:
+    lab = Lab("v1")
+    wynik = subprocess.run([*lab.compose, "ps", "--status", "running", "--services"], capture_output=True, text=True)
+    if "biuro-pc" not in wynik.stdout.split():
+        pytest.fail("lab v1 nie działa: najpierw make v1-up-atak")
+    return lab

@@ -25,7 +25,8 @@ testpaths = ["lab/obrazy/sim/tests", "tests/dokumentacja"]
 pythonpath = ["lab/obrazy/sim"]
 addopts = ["--import-mode=importlib", "--strict-markers"]
 markers = [
-    "security: test bezpieczeństwa na działającym labie (tests/security)",
+    "security: test bezpieczeństwa na działającym labie v0 (tests/security, `make test-security`)",
+    "segmentacja: test segmentacji na działającym labie v1 (tests/security, `make test-segmentacja`)",
 ]
 
 [tool.ruff]

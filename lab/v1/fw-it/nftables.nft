@@ -1,0 +1,37 @@
+#!/usr/sbin/nft -f
+# Zapora IT (A07, dawny router z NAT) labu v1. Styk IDMZ (Z5) i biura (Z6) z internetem (Z8).
+# NAT z sieci wewnętrznych do internetu i polityka drop w forward: przechodzi tylko ruch powrotny
+# i kanały K6–K9 z T05. Biuro nie ma tu żadnego interfejsu do stref OT, więc nie ma z niego drogi do OT.
+flush ruleset
+
+table ip nat {
+  chain postrouting {
+    type nat hook postrouting priority srcnat; policy accept;
+    # Ruch z IDMZ i biura do internetu wychodzi pod adresem zapory w Z8 (jak dawny router zakładowy).
+    ip saddr { 10.10.35.0/24, 10.10.40.0/24 } ip daddr 203.0.113.0/24 masquerade
+  }
+}
+
+table inet filter {
+  chain input {
+    type filter hook input priority filter; policy drop;
+    iif "lo" accept
+    ct state established,related accept
+    icmp type echo-request accept
+    icmpv6 type { echo-request, nd-neighbor-solicit, nd-neighbor-advert } accept
+  }
+
+  chain forward {
+    type filter hook forward priority filter; policy drop;
+    ct state established,related accept
+
+    # K6 · C09: bramka Node-RED to jedyne wyjście danych produkcyjnych do chmury (A15 dochodzi w T12).
+    ip saddr 10.10.35.15 ip daddr 203.0.113.10 tcp dport 1883 ct state new accept
+    # K8 · C11: praca biurowa w internecie (WWW i poczta); biuro nie widzi stref OT.
+    ip saddr 10.10.40.0/24 ip daddr 203.0.113.0/24 tcp dport { 443, 587, 993 } ct state new accept
+    # K7 · C10: biuro odkłada plan zleceń na serwerze wymiany A17 w IDMZ (poza symulacją).
+    # ip saddr 10.10.40.0/24 ip daddr 10.10.35.17 tcp dport 443 ct state new accept
+
+    log prefix "fw-it drop " flags all counter drop
+  }
+}

@@ -85,3 +85,46 @@ Na żywo z Windowsa (Wireshark w `C:\Program Files\Wireshark`):
 ```powershell
 ssh uzytkownik@debian "sudo tcpdump -i wt0-zaklad -U -w - not port 22" | & "C:\Program Files\Wireshark\Wireshark.exe" -k -i -
 ```
+
+## v1 — sieć zabezpieczona (stan to-be)
+
+```bash
+make v1-up          # albo make v1-up-atak: z przejętym komputerem biurowym (biuro-pc)
+make v1-status      # kontenery i pamięć
+make v1-logs        # logi symulatorów (JSON)
+make test-segmentacja  # testy: dozwolone kanały działają, z biura nie ma drogi do OT (najpierw v1-up-atak)
+make v1-down
+```
+
+v1 realizuje model stref i conduitów z [`docs/architektura/strefy-i-conduity.md`](../docs/architektura/strefy-i-conduity.md) (T05).
+Każda strefa to osobna sieć Dockera, a ruch między strefami idzie wyłącznie przez zaporę: hosty mają trasę
+domyślną przez swój interfejs zapory, więc nie przeskoczą do innej strefy z pominięciem filtrowania.
+
+Dwie zapory nftables z polityką `drop` w `forward` (przechodzi tylko ruch powrotny i jawne kanały):
+
+- **fw-ot** (A16) — styk stref OT (Z1 komórka, Z2 odpylanie, Z3 nadzór, Z4 operacje) z IDMZ (Z5);
+- **fw-it** (A07, dawny router z NAT) — styk IDMZ i biura (Z6) z internetem (Z8). Biuro nie ma interfejsu
+  w żadnej strefie OT, więc z biura nie istnieje droga do OT.
+
+| Strefa | Podsieć | Kontenery w labie |
+|---|---|---|
+| Z1 komórka CNC | 10.10.11.0/24 | `cnc-1` .11, `cnc-2` .12 |
+| Z2 odpylanie | 10.10.12.0/24 | `plc-odpylanie` .21 |
+| Z4 operacje | 10.10.30.0/24 | `broker-lokalny` (A14) .14, `serwer` .31, `cad-stacja` .41 |
+| Z5 IDMZ | 10.10.35.0/24 | bramka Node-RED A15 dochodzi w T12 |
+| Z6 biuro | 10.10.40.0/24 | `biuro-pc` .66 (przejęty, tylko profil `atak`) |
+| Z8 internet/chmura | 203.0.113.0/24 | `chmura-mqtt` .10 |
+
+Zapory adresem interfejsu kończą każdą strefę: fw-ot ma .254 w Z1–Z4 i .253 w Z5, fw-it .254 w Z5/Z6 i
+203.0.113.2 w Z8. Kanały zrealizowane w labie: CAD → obrabiarki (G-code 8080), obrabiarki i PLC →
+lokalny broker A14 (MQTT 1883), bramka IDMZ → A14 oraz → chmura (T12), biuro → internet (443/587/993).
+
+### Co zmienia się względem v0
+
+1. Płaską sieć zastępują strefy Purdue z IDMZ na poziomie 3.5; dwie zapory zamiast jednego routera bez filtrowania.
+2. Maszyny piszą telemetrię do **lokalnego** brokera A14 w strefie operacji, a nie wprost do chmury.
+3. Z przejętego biura nie ma już drogi do obrabiarek (8080), serwera projektów (80), PLC (Modbus 502)
+   ani do lokalnego i chmurowego brokera MQTT — potwierdzają to testy odwrotne do słabości v0.
+
+Na razie (do T10) MQTT działa jawnie na 1883 i broker jest anonimowy — jak w v0. TLS daje T10, konta i ACL
+daje T11, a bramkę Node-RED z IDMZ do chmury T12.
