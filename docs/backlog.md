@@ -29,8 +29,8 @@ MQTT z TLS, certyfikaty, ACL, segmentacja, Node-RED gateway. Oddanie: Wireshark 
 
 | Zadanie | Cel | Zależy od | Stan |
 |---|---|---|---|
-| [T08](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/10) Analiza ruchu v0 | Dowód, że w v0 dane i komendy idą jawnym tekstem i dają się podsłuchać oraz wstrzyknąć. | [T02](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/4) | w toku |
-| [T09](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/11) Lab v1: segmentacja i zapory | Sieci stref i dwie zapory nftables realizujące conduity z T05. | [T05](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/7) | do zrobienia |
+| [T08](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/10) Analiza ruchu v0 | Dowód, że w v0 dane i komendy idą jawnym tekstem i dają się podsłuchać oraz wstrzyknąć. | [T02](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/4) | zamknięte |
+| [T09](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/11) Lab v1: segmentacja i zapory | Sieci stref i dwie zapory nftables realizujące conduity z T05. | [T05](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/7) | w toku |
 | [T10](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/12) PKI i TLS | Własne CA i certyfikaty; MQTT tylko po TLS. | [T09](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/11) | do zrobienia |
 | [T11](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/13) ACL MQTT | Każde urządzenie publikuje i czyta tylko swoje tematy. | [T10](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/12) | do zrobienia |
 | [T12](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/14) Node-RED gateway | Bramka w IDMZ: lokalny broker → filtrowanie i agregacja → chmura. | [T10](https://github.com/l3x1cn/Iot-Ot-Wood-Tech-CNC/issues/12) | do zrobienia |

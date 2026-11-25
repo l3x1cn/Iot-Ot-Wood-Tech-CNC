@@ -48,7 +48,7 @@ make v0-down
 ## Jak pracujemy
 
 - Każde zadanie to issue `Txx` z milestone'em swojego etapu. Jeden issue to jeden PR: gałąź `txx-krotki-opis`, PR do `main` z `Closes #N`.
-- Przed PR: `make lint unit gitleaks trivy-config` (te same kontrole co CI). Zmiany w labie: także `make v0-up-atak test-security` (job `e2e` w CI).
+- Przed PR: `make lint unit gitleaks trivy-config` (te same kontrole co CI). Zmiany w labie: także `make v0-up-atak test-security` (job `e2e`) oraz `make v1-up-atak test-segmentacja` (job `e2e-v1`) w CI.
 - Klucze prywatne i hasła nigdy nie trafiają do repozytorium: blokuje je hook gitleaks i job `secrets`.
 - PR kończący etap aktualizuje tabelę „Status projektu” i dodaje sprawozdanie cząstkowe według [szablonu](docs/sprawozdania/README.md).
 - Dowody (pliki pcap, logi, zrzuty ekranu) trafiają do `evidence/<etap>/` i są linkowane ze sprawozdania.

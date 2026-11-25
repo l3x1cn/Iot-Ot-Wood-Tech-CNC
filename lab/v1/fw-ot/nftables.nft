@@ -1,0 +1,34 @@
+#!/usr/sbin/nft -f
+# Zapora OT (A16) labu v1. Styk stref OT (Z1 komórka, Z2 odpylanie, Z3 nadzór, Z4 operacje) z IDMZ (Z5).
+# Polityka drop w input i forward: przechodzi tylko ruch powrotny i kanały conduitów K1–K5 z T05.
+# Reguły dopasowujemy po adresach, nie po interfejsach, więc nie zależą od kolejności sieci w Dockerze.
+# Zapory nie da się zarządzać z sieci (input drop); zmiany w labie przez `docker exec`.
+flush ruleset
+
+table inet filter {
+  chain input {
+    type filter hook input priority filter; policy drop;
+    iif "lo" accept
+    ct state established,related accept
+    icmp type echo-request accept
+    icmpv6 type { echo-request, nd-neighbor-solicit, nd-neighbor-advert } accept
+  }
+
+  chain forward {
+    type filter hook forward priority filter; policy drop;
+    ct state established,related accept
+
+    # K1 · C01: stacja CAD/CAM wysyła programy G-code na obrabiarki (jedyne źródło na porcie 8080).
+    ip saddr 10.10.30.41 ip daddr { 10.10.11.11, 10.10.11.12 } tcp dport 8080 ct state new accept
+    # K1 · C02: obrabiarki piszą telemetrię i słuchają komend na lokalnym brokerze A14.
+    ip saddr { 10.10.11.11, 10.10.11.12 } ip daddr 10.10.30.14 tcp dport 1883 ct state new accept
+    # K2 · C04: PLC odpylania wysyła stan do lokalnego brokera (PLC nie przyjmuje połączeń z Z4).
+    ip saddr 10.10.12.21 ip daddr 10.10.30.14 tcp dport 1883 ct state new accept
+    # K5 · C07: bramka Node-RED z IDMZ czyta lokalny broker (A15 dochodzi w T12).
+    ip saddr 10.10.35.15 ip daddr 10.10.30.14 tcp dport 1883 ct state new accept
+    # K3 · C05: panel operatora steruje PLC po Modbus (A10 poza symulacją) — kanał opisany, bez hosta w labie.
+    # ip saddr 10.10.20.10 ip daddr 10.10.12.21 tcp dport 502 ct state new accept
+
+    log prefix "fw-ot drop " flags all counter drop
+  }
+}

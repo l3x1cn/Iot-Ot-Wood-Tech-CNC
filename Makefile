@@ -6,10 +6,14 @@ MAKEFLAGS += --no-print-directory
 export PATH := $(shell mise bin-paths 2>/dev/null | tr '\n' ':')$(PATH)
 
 V0 := docker compose -f lab/v0/compose.yaml --profile atak
+V1 := docker compose -f lab/v1/compose.yaml --profile atak
+# Usługi labu v1 bez przejętego komputera biurowego (biuro-pc ma profil `atak`).
+V1_USLUGI := fw-ot fw-it broker-lokalny cnc-1 cnc-2 plc-odpylanie serwer cad-stacja chmura-mqtt
 CZAS ?= 60
 
-.PHONY: help doctor lint unit gitleaks trivy-config test-security \
-        v0-up v0-up-atak v0-down v0-status v0-logs v0-mqtt v0-capture v0-nagranie v0-przeplywy v0-analiza
+.PHONY: help doctor lint unit gitleaks trivy-config test-security test-segmentacja \
+        v0-up v0-up-atak v0-down v0-status v0-logs v0-mqtt v0-capture v0-nagranie v0-przeplywy v0-analiza \
+        v1-up v1-up-atak v1-down v1-status v1-logs
 
 help:
 	@echo "make doctor        narzedzia z mise.toml, Docker bez sudo, compose, pamiec"
@@ -17,7 +21,8 @@ help:
 	@echo "make unit          testy jednostkowe"
 	@echo "make gitleaks      sekrety w calej historii HEAD"
 	@echo "make trivy-config  bramka Trivy dla Dockerfile i konfiguracji (wyniki w reports/trivy/)"
-	@echo "make test-security testy bezpieczenstwa na dzialajacym labie (najpierw make v0-up-atak)"
+	@echo "make test-security testy bezpieczenstwa na dzialajacym labie v0 (najpierw make v0-up-atak)"
+	@echo "make test-segmentacja testy segmentacji na dzialajacym labie v1 (najpierw make v1-up-atak)"
 	@echo "make v0-up         lab v0 (siec niebezpieczna): router, chmura MQTT, CNC x2, PLC, serwer, stacja CAD"
 	@echo "make v0-up-atak    jak v0-up, plus przejety komputer biurowy (biuro-pc)"
 	@echo "make v0-status     kontenery i zuzycie pamieci"
@@ -28,6 +33,11 @@ help:
 	@echo "make v0-przeplywy  polaczenia widoczne w pliku pcap (PCAP=plik.pcap), do porownania z tabela przeplywow"
 	@echo "make v0-analiza    nagranie v0 ze scenariuszem ataku z biura i zrzuty tshark do evidence/etap-3/ (ok. 2 min)"
 	@echo "make v0-down       zatrzymuje i usuwa kontenery i sieci labu v0"
+	@echo "make v1-up         lab v1 (siec zabezpieczona): strefy, dwie zapory nftables, lokalny broker"
+	@echo "make v1-up-atak    jak v1-up, plus przejety komputer biurowy w strefie biura (biuro-pc)"
+	@echo "make v1-status     kontenery i zuzycie pamieci labu v1"
+	@echo "make v1-logs       logi JSON symulatorow labu v1 (Ctrl+C konczy)"
+	@echo "make v1-down       zatrzymuje i usuwa kontenery i sieci labu v1"
 
 doctor:
 	@bash scripts/doctor.sh
@@ -58,6 +68,11 @@ test-security:
 	@mkdir -p reports
 	uv run --locked pytest tests/security -m security -v --junitxml=reports/junit-security.xml
 
+# Testy segmentacji labu v1 (job e2e-v1): tests/security, marker segmentacja; najpierw make v1-up-atak.
+test-segmentacja:
+	@mkdir -p reports
+	uv run --locked pytest tests/security -m segmentacja -v --junitxml=reports/junit-segmentacja.xml
+
 v0-up:
 	$(V0) up -d --build cnc-1 cnc-2 plc-odpylanie serwer cad-stacja
 
@@ -66,6 +81,22 @@ v0-up-atak:
 
 v0-down:
 	$(V0) down
+
+v1-up:
+	$(V1) up -d --build $(V1_USLUGI)
+
+v1-up-atak:
+	$(V1) up -d --build
+
+v1-down:
+	$(V1) down
+
+v1-status:
+	$(V1) ps
+	@docker stats --no-stream --format 'table {{.Name}}\t{{.MemUsage}}\t{{.CPUPerc}}' $$($(V1) ps -q)
+
+v1-logs:
+	$(V1) logs -f cnc-1 cnc-2 plc-odpylanie cad-stacja
 
 v0-status:
 	$(V0) ps
